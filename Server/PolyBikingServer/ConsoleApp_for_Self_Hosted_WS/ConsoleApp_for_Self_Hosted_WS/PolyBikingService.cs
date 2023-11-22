@@ -11,27 +11,24 @@ namespace ConsoleApp_for_Self_Hosted_WS
     class PolyBikingService : IPolyBikingService
     {
         static readonly HttpClient client = new HttpClient();
-        async public Task<string> Add(int num1, int num2)
+        async public Task<string> Add(double[] coord1, double[] coord2)
         {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync("https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&start=8.681495,49.41461&end=8.687872,49.420318");
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                
-                JObject responseJson = JObject.Parse(responseBody);
-                Console.WriteLine(responseJson.ToString());
-                string geometryType = responseJson["features"][0]["geometry"].ToString();
-                return geometryType;
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine("Message :{0} ", e.Message);
-            }
-            return "l7wa";
+            return await GetPath(coord1, coord2);
         }
+        async private Task<string> GetPath(double[] coord1, double[] coord2)
+        {
+            string url = $"https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&start={coord1[0]},{coord1[1]}&{coord2[0]},{coord2[1]}";
+            HttpResponseMessage response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            
+            JObject responseJson = JObject.Parse(responseBody);
+            Console.WriteLine(responseJson.ToString());
+            string geometryType = responseJson["features"][0]["geometry"].ToString();
+            return geometryType;
 
+        }
     }
+
 
 }
