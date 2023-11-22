@@ -2,11 +2,16 @@ package polybiking.map;
 
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
+import org.jxmapviewer.input.CenterMapListener;
+import org.jxmapviewer.input.PanKeyListener;
+import org.jxmapviewer.input.PanMouseInputListener;
+import org.jxmapviewer.input.ZoomMouseWheelListenerCursor;
 import org.jxmapviewer.painter.CompoundPainter;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.*;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
@@ -35,10 +40,18 @@ public class MapView {
         this.frame.getContentPane().add(this.mapViewer);
         this.frame.setSize(800, 600);
         this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+        this.frame.setVisible(true);
         TileFactoryInfo info = new OSMTileFactoryInfo();
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
         this.mapViewer.setTileFactory(tileFactory);
+
+        // Add interactions
+        MouseInputListener mia = new PanMouseInputListener(this.mapViewer);
+        this.mapViewer.addMouseListener(mia);
+        this.mapViewer.addMouseMotionListener(mia);
+        this.mapViewer.addMouseListener(new CenterMapListener(this.mapViewer));
+        this.mapViewer.addMouseWheelListener(new ZoomMouseWheelListenerCursor(this.mapViewer));
+        this.mapViewer.addKeyListener(new PanKeyListener(this.mapViewer));
     }
 
     /**
@@ -69,13 +82,16 @@ public class MapView {
         this.mapViewer.zoomToBestFit(new HashSet<>(track), 0.7);
 
         // Create waypoints from the geo-positions
-        Set<Waypoint> waypoints = new HashSet<>(Arrays.asList(
-                new DefaultWaypoint(wiesbaden),
-                new DefaultWaypoint(darmstadt)));
+        Set<MyWaypoint> waypoints = new HashSet<>(Arrays.asList(
+                new MyWaypoint("Origin", Color.BLACK, frankfurt, "origin.png"),
+                new MyWaypoint("Station", Color.BLACK, wiesbaden, "station.png"),
+                new MyWaypoint("Station", Color.BLACK, darmstadt, "station.png"),
+                new MyWaypoint("Destination", Color.BLACK, offenbach, "destination.png")));
 
         // Create a waypoint painter that takes all the waypoints
-        WaypointPainter<Waypoint> waypointPainter = new WaypointPainter<>();
+        WaypointPainter<MyWaypoint> waypointPainter = new WaypointPainter<>();
         waypointPainter.setWaypoints(waypoints);
+        waypointPainter.setRenderer(new FancyWaypointRenderer());
 
         // Create a compound painter that uses both the route-painter and the waypoint-painter
         List<Painter<JXMapViewer>> painters = new ArrayList<>();
