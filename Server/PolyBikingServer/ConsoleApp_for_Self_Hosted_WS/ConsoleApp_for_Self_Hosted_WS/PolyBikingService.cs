@@ -20,12 +20,8 @@ namespace ConsoleApp_for_Self_Hosted_WS
                 string responseBody = await response.Content.ReadAsStringAsync();
                 
                 JObject responseJson = JObject.Parse(responseBody);
-                JObject elfiturs = (JObject) responseJson["features"];
-                foreach(var prop  in elfiturs.Properties())
-                {
-                    Console.WriteLine(prop.Name);
-                }
-                string geometryType = responseJson["features"].ToString();
+                Console.WriteLine(responseJson.ToString());
+                string geometryType = responseJson["features"][0]["geometry"].ToString();
                 return geometryType;
             }
             catch (HttpRequestException e)
