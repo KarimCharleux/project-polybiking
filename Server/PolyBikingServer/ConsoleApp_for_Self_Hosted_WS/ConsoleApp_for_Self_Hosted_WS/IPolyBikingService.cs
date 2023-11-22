@@ -13,7 +13,7 @@ namespace ConsoleApp_for_Self_Hosted_WS
     public interface IPolyBikingService
     {
         [OperationContract()]
-        int Add(int num1, int num2);
+        Task<string> Add(int num1, int num2);
     }
 
 
