@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F5A5CFBF-45CC-402F-B222-1E6E6A765C2A}</ProjectGuid>
+    <ProjectGuid>{5037EC61-61E2-4253-9ED3-95D9344673C9}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>PolyBikingServer</RootNamespace>
-    <AssemblyName>PolyBikingServer</AssemblyName>
+    <RootNamespace>ConsoleApp_for_Self_Hosted_WS</RootNamespace>
+    <AssemblyName>ConsoleApp_for_Self_Hosted_WS</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,8 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BikingService.cs" />
-    <Compile Include="IBikingService.cs" />
+    <Compile Include="IPolyBikingService.cs" />
+    <Compile Include="PolyBikingService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -52,7 +53,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".gitignore" />
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
