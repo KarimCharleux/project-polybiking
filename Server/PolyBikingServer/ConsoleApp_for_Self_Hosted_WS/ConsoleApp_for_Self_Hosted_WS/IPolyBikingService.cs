@@ -13,7 +13,7 @@ namespace ConsoleApp_for_Self_Hosted_WS
     public interface IPolyBikingService
     {
         [OperationContract()]
-        Task<string> Add(double[] coord1, double[] coord2);
+        Task<Path[]> Add(double[] coord1, double[] coord2);
     }
 
 
