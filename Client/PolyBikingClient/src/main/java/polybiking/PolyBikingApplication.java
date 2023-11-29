@@ -1,5 +1,8 @@
 package polybiking;
 
+import com.soap.ws.client.generated.ArrayOfPath;
+import com.soap.ws.client.generated.IPolyBikingService;
+import com.soap.ws.client.generated.PolyBikingService;
 import org.jxmapviewer.viewer.GeoPosition;
 import polybiking.map.MapView;
 
@@ -10,12 +13,15 @@ import java.util.Scanner;
  * Main class of the PolyBiking application
  */
 public class PolyBikingApplication {
+    private final IPolyBikingService polyBikingService;
     private final CitiesList citiesList;
     private final Scanner scanner;
 
     public PolyBikingApplication() {
         this.citiesList = CitiesList.getInstance();
         this.scanner = new Scanner(System.in);
+        PolyBikingService bikingService = new PolyBikingService();
+        this.polyBikingService = bikingService.getBasicHttpBindingIPolyBikingService();
 
         System.out.println("▷ PolyBiking Application ◁\n");
     }
@@ -32,7 +38,9 @@ public class PolyBikingApplication {
         String origin = askForEnter("origin");
         String destination = askForEnter("destination");
 
-        MapView mapView = new MapView(this.citiesList.get(origin), this.citiesList.get(destination));
+        ArrayOfPath paths = polyBikingService.computeTrip(origin, destination);
+
+        MapView mapView = new MapView(paths);
 
         System.out.println("\n✅ Trip from " + origin + " to " + destination + " for " + mapView.calculateTripTime() + " !");
     }
@@ -44,15 +52,7 @@ public class PolyBikingApplication {
      * @return the city name existing in the list
      */
     private String askForEnter(String useFor) {
-        String result = "";
-        while (result.isEmpty()) {
-            System.out.println("\n● Enter " + useFor + ": ");
-            result = scanner.nextLine();
-            if (!this.citiesList.containsKey(result)) {
-                System.out.println("❌ City not found");
-                result = "";
-            }
-        }
-        return result;
+        System.out.println("\n● Enter " + useFor + ": ");
+        return scanner.nextLine();
     }
 }

@@ -1,5 +1,9 @@
 package polybiking.map;
 
+import com.soap.ws.client.generated.ArrayOfPath;
+import com.soap.ws.client.generated.ArrayOfPosition;
+import com.soap.ws.client.generated.Path;
+import com.soap.ws.client.generated.Position;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.input.CenterMapListener;
@@ -21,12 +25,10 @@ public class MapView {
     private static final Color FOOT_PATH_COLOR = Color.GRAY;
     private final JXMapViewer mapViewer;
     private final JFrame frame;
-    private final GeoPosition origin;
-    private final GeoPosition destination;
+    private final ArrayOfPath paths;
 
-    public MapView(GeoPosition origin, GeoPosition destination) {
-        this.origin = origin;
-        this.destination = destination;
+    public MapView(ArrayOfPath paths) {
+        this.paths = paths;
         this.frame = new JFrame("PolyBiking");
         this.mapViewer = new JXMapViewer();
         this.setupMap();
@@ -59,34 +61,39 @@ public class MapView {
      * Make a call to the SOAP Server
      */
     private void computeRoute() {
-        GeoPosition frankfurt = new GeoPosition(50, 7, 0, 8, 41, 0);
-        GeoPosition wiesbaden = new GeoPosition(50, 5, 0, 8, 14, 0);
-        GeoPosition mainz = new GeoPosition(50, 0, 0, 8, 16, 0);
-        GeoPosition darmstadt = new GeoPosition(49, 52, 0, 8, 39, 0);
-        GeoPosition offenbach = new GeoPosition(50, 6, 0, 8, 46, 0);
 
         // Create a track from the geo-positions
-        List<GeoPosition> track = Arrays.asList(frankfurt, wiesbaden);
-        RoutePainter routePainter = new RoutePainter(track, FOOT_PATH_COLOR);
+        List<GeoPosition> trackFirstFoot = new ArrayList<>();
+        List<GeoPosition> trackCycle = new ArrayList<>();
+        List<GeoPosition> trackSecondFoot = new ArrayList<>();
 
-        List<GeoPosition> track2 = Arrays.asList(wiesbaden, mainz);
-        RoutePainter routePainter2 = new RoutePainter(track2, CYCLE_PATH_COLOR);
+        Path pathFirstFoot = this.paths.getPath().get(0);
+        for(Position coordinates : pathFirstFoot.getCoordinates().getValue().getPosition()) {
+            trackFirstFoot.add(new GeoPosition(coordinates.getLat(), coordinates.getLng()));
+        }
+        RoutePainter routePainter = new RoutePainter(trackFirstFoot, FOOT_PATH_COLOR);
 
-        List<GeoPosition> track3 = Arrays.asList(mainz, darmstadt);
-        RoutePainter routePainter3 = new RoutePainter(track3, CYCLE_PATH_COLOR);
+        Path pathCycle = this.paths.getPath().get(1);
+        for(Position coordinates : pathCycle.getCoordinates().getValue().getPosition()) {
+            trackCycle.add(new GeoPosition(coordinates.getLat(), coordinates.getLng()));
+        }
+        RoutePainter routePainter2 = new RoutePainter(trackCycle, CYCLE_PATH_COLOR);
 
-        List<GeoPosition> track4 = Arrays.asList(darmstadt, offenbach);
-        RoutePainter routePainter4 = new RoutePainter(track4, FOOT_PATH_COLOR);
+        Path pathSecondFoot = this.paths.getPath().get(2);
+        for(Position coordinates : pathSecondFoot.getCoordinates().getValue().getPosition()) {
+            trackSecondFoot.add(new GeoPosition(coordinates.getLat(), coordinates.getLng()));
+        }
+        RoutePainter routePainter3 = new RoutePainter(trackSecondFoot, FOOT_PATH_COLOR);
 
         // Set the focus
-        this.mapViewer.zoomToBestFit(new HashSet<>(track), 0.7);
+        this.mapViewer.zoomToBestFit(new HashSet<>(trackFirstFoot), 0.7);
 
         // Create waypoints from the geo-positions
         Set<MyWaypoint> waypoints = new HashSet<>(Arrays.asList(
-                new MyWaypoint("Origin", Color.BLACK, frankfurt, "origin.png"),
-                new MyWaypoint("Station", Color.BLACK, wiesbaden, "station.png"),
-                new MyWaypoint("Station", Color.BLACK, darmstadt, "station.png"),
-                new MyWaypoint("Destination", Color.BLACK, offenbach, "destination.png")));
+                new MyWaypoint("Origin", Color.BLACK, trackFirstFoot.get(0), "origin.png"),
+                new MyWaypoint("Station", Color.BLACK, trackCycle.get(0), "station.png"),
+                new MyWaypoint("Station", Color.BLACK, trackCycle.get(trackCycle.size()-1), "station.png"),
+                new MyWaypoint("Destination", Color.BLACK, trackSecondFoot.get(trackSecondFoot.size()-1), "destination.png")));
 
         // Create a waypoint painter that takes all the waypoints
         WaypointPainter<MyWaypoint> waypointPainter = new WaypointPainter<>();
@@ -98,7 +105,6 @@ public class MapView {
         painters.add(routePainter);
         painters.add(routePainter2);
         painters.add(routePainter3);
-        painters.add(routePainter4);
         painters.add(waypointPainter);
 
         CompoundPainter<JXMapViewer> painter = new CompoundPainter<>(painters);
