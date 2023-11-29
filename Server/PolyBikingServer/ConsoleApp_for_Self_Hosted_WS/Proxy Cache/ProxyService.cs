@@ -12,8 +12,18 @@ namespace Proxy_Cache
 {
     internal class ProxyService : IProxyService
     {
+        ObjectCache addressCache = MemoryCache.Default;
+        ObjectCache routeCache = MemoryCache.Default;
+        ObjectCache stationCache = MemoryCache.Default;
+        CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(10) };
+
         public Task<string> GetAddressInfo(string address)
         {
+            string cachedAddress = this.addressCache[address] as string;
+            if (cachedAddress == null)
+            {
+
+            }
             throw new NotImplementedException();
         }
 
