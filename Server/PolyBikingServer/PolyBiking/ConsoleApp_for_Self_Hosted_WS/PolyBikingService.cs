@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Runtime.Serialization;
+
 
 namespace PolyBiking
 {
@@ -191,10 +193,15 @@ namespace PolyBiking
         }
     }
 
+    [DataContract]
     public class Path
     {
+        [DataMember]
         public string type;
+
+        [DataMember]
         public List<Position> coordinates;
+
         public Path(List<Position> coordinates)
         {
             this.coordinates = coordinates;

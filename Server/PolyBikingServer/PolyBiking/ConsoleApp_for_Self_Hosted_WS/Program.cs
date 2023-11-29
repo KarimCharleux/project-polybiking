@@ -25,9 +25,18 @@ namespace PolyBiking
             Uri httpUrl = new Uri("http://localhost:3000/MyService/PolyBikingService");
             using (ServiceHost host = new ServiceHost(typeof(PolyBikingService), httpUrl))
             {
+                // Enable Exception details in fault exceptions
+                host.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
+                host.Description.Behaviors.Add( new ServiceDebugBehavior { IncludeExceptionDetailInFaults = true });
+
                 // Créer et configurer un BasicHttpBinding sans sécurité
                 BasicHttpBinding binding = new BasicHttpBinding();
                 binding.Security.Mode = BasicHttpSecurityMode.None;
+
+                // Activer Metadata publishing 
+                ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
+                smb.HttpGetEnabled = true;
+                host.Description.Behaviors.Add(smb);
 
                 // Ajouter le point de terminaison
                 host.AddServiceEndpoint(typeof(IPolyBikingService), binding, "");

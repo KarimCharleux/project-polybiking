@@ -4,16 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="63605a36-5162-40ac-8c0b-8e0605c9f1de" name="Changes" comment="Finish the Heavy Client Java">
-      <change afterPath="$PROJECT_DIR$/src/main/java/polybiking/map/FancyWaypointRenderer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/polybiking/map/MultiplyComposite.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/polybiking/map/MyWaypoint.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/destination.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/origin.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/station.png" afterDir="false" />
+    <list default="true" id="63605a36-5162-40ac-8c0b-8e0605c9f1de" name="Changes" comment="Add logo">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ArrayOfPath.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ArrayOfPosition.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ComputeTrip.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ComputeTripResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/IPolyBikingService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ObjectFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/Path.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/PolyBikingService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/Position.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/package-info.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/polybiking/PolyBikingApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/polybiking/PolyBikingApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/polybiking/map/MapView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/polybiking/map/MapView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/PolyBikingServer.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/PolyBikingServer.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/PolyBikingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/PolyBikingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/PolyBikingServer.sln" beforeDir="false" afterPath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/PolyBikingServer.sln" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,25 +54,25 @@
     <option name="showLibraryContents" value="true" />
     <option name="showScratchesAndConsoles" value="false" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/Admin/OneDrive - Université Nice Sophia Antipolis/Middleware and Service Oriented Computing/project-polybiking/Client/PolyBikingClient/src/main/resources",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Admin/OneDrive - Université Nice Sophia Antipolis/Middleware and Service Oriented Computing/project-polybiking/Client/PolyBikingClient/src/main/resources&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.repository.indices&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="" />
@@ -80,6 +90,11 @@
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="polybiking.map" />
     </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean install" />
+    </option>
   </component>
   <component name="RunManager" selected="Application.Main">
     <configuration name="Demo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -142,6 +157,7 @@
       <workItem from="1700662265951" duration="777000" />
       <workItem from="1700663467313" duration="6561000" />
       <workItem from="1700677203370" duration="3221000" />
+      <workItem from="1701280154467" duration="1106000" />
     </task>
     <task id="LOCAL-00001" summary="Add maven to front project">
       <option name="closed" value="true" />
