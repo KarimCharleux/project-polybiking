@@ -39,8 +39,6 @@ namespace PolyBiking
 
         async private Task<Position> getPositionFromAddress(string address)
         {
-            StationInfo departingStation = null;
-            StationInfo arrivalStation = null;
             string url = "https://api.openrouteservice.org/geocode/autocomplete?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&text=" + address + "&boundary.country=FR&layers=locality,address";
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();

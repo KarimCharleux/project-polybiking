@@ -12,11 +12,11 @@ namespace Proxy_Cache
     {
         static void Main(string[] args)
         {
-            Uri httpUrl = new Uri("http://localhost:3000/MyService/PolyBikingService");
+            Uri httpUrl = new Uri("http://localhost:3001/MyService/ProxyService");
 
-            ServiceHost host = new ServiceHost(typeof(PolyBikingService), httpUrl);
+            ServiceHost host = new ServiceHost(typeof(ProxyService), httpUrl);
 
-            host.AddServiceEndpoint(typeof(IPolyBikingService), new WSHttpBinding(), ""); 
+            host.AddServiceEndpoint(typeof(IProxyService), new WSHttpBinding(), ""); 
 
             ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
             smb.HttpGetEnabled = true;

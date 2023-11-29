@@ -13,10 +13,10 @@ namespace Proxy_Cache
     public interface IProxyService
     {
         [OperationContract()]
-        Task<string> GetStationInfo(double latitude, double longitude);
+        Task<string> GetStationInfo();
 
         [OperationContract()]
-        Task<string> GetRouteInfo(double latitude, double longitude);
+        Task<string> GetRouteInfo(Position start, Position end);
         [OperationContract()]
         Task<string> GetAddressInfo(string address);
     }

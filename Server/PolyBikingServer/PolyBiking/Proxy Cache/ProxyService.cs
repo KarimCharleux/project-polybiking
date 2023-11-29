@@ -12,29 +12,77 @@ namespace Proxy_Cache
 {
     internal class ProxyService : IProxyService
     {
+        static readonly HttpClient client = new HttpClient();
         ObjectCache addressCache = MemoryCache.Default;
         ObjectCache routeCache = MemoryCache.Default;
         ObjectCache stationCache = MemoryCache.Default;
         CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(10) };
 
-        public Task<string> GetAddressInfo(string address)
+        public async Task<string> GetAddressInfo(string address)
         {
             string cachedAddress = this.addressCache[address] as string;
             if (cachedAddress == null)
             {
-
+            string url = "https://api.openrouteservice.org/geocode/autocomplete?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&text=" + address + "&boundary.country=FR&layers=locality,address";
+            HttpResponseMessage response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            CacheItem value = new CacheItem(address, responseBody);
+            addressCache.Add(value, policy);
+            return responseBody;
             }
-            throw new NotImplementedException();
+            return cachedAddress;
         }
 
-        public Task<string> GetRouteInfo(double latitude, double longitude)
+        public async Task<string> GetRouteInfo(Position start, Position end)
         {
-            throw new NotImplementedException();
+            string cacheKey = $"{start.Lng},{start.Lat};{end.Lng},{end.Lat}";
+            string cachedRoute = this.routeCache[cacheKey] as string;
+            if(cachedRoute == null)
+            {
+            string url = $"https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&start={start.Lng},{start.Lat}&end={end.Lng},{end.Lat}";
+            HttpResponseMessage response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            CacheItem value = new CacheItem(cacheKey, responseBody);
+            routeCache.Add(value, policy);
+            return responseBody;
+            }
+            return cachedRoute;
         }
 
-        public Task<string> GetStationInfo(double latitude, double longitude)
+        public async Task<string> GetStationInfo()
         {
-            throw new NotImplementedException();
+            string cachedInfo = this.stationCache["elstazion"] as string;
+            if(cachedInfo == null)
+            {
+                string url = "https://api.jcdecaux.com/vls/v1/stations?apiKey=105a67e972bd8e364d7f4da5301dbaf4f314db90";
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync(); 
+                CacheItem value = new CacheItem("elstazion", responseBody);
+                routeCache.Add(value, policy);
+                return responseBody;
+            }
+            return cachedInfo;
+        }
+    }
+    public class Position
+    {
+        [JsonProperty("lat")]
+        public double Lat { get; set; }
+
+        [JsonProperty("lng")]
+        public double Lng { get; set; }
+
+        public Position(double lat, double lng)
+        {
+            Lat = lat;
+            Lng = lng;
+        }
+
+        public Position()
+        {
         }
     }
 }
