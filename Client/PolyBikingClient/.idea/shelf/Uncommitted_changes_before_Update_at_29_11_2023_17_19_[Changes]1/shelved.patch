@@ -1,0 +1,650 @@
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>org.polybiking-client</groupId>\r\n    <artifactId>PolyBikingClient</artifactId>\r\n    <version>1.0-SNAPSHOT</version>\r\n\r\n    <properties>\r\n        <maven.compiler.source>17</maven.compiler.source>\r\n        <maven.compiler.target>17</maven.compiler.target>\r\n        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\r\n    </properties>\r\n\r\n    <repositories>\r\n        <repository>\r\n            <id>josm-public</id>\r\n            <name>josm public releases</name>\r\n            <url>https://josm.openstreetmap.de/nexus/content/groups/public</url>\r\n        </repository>\r\n    </repositories>\r\n\r\n    <dependencies>\r\n        <dependency>\r\n            <groupId>org.jxmapviewer</groupId>\r\n            <artifactId>jxmapviewer2</artifactId>\r\n            <version>2.6</version>\r\n        </dependency>\r\n    </dependencies>\r\n\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ b/pom.xml	(date 1701273639096)
+@@ -1,33 +1,71 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<project xmlns="http://maven.apache.org/POM/4.0.0"
+-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+-
+     <groupId>org.polybiking-client</groupId>
+     <artifactId>PolyBikingClient</artifactId>
+     <version>1.0-SNAPSHOT</version>
++    <name>Archetype - Middleware-HeavyClient</name>
++    <url>http://maven.apache.org</url>
+ 
+     <properties>
+         <maven.compiler.source>17</maven.compiler.source>
+         <maven.compiler.target>17</maven.compiler.target>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+     </properties>
+-
+-    <repositories>
+-        <repository>
+-            <id>josm-public</id>
+-            <name>josm public releases</name>
+-            <url>https://josm.openstreetmap.de/nexus/content/groups/public</url>
+-        </repository>
+-    </repositories>
+-
+     <dependencies>
+         <dependency>
+             <groupId>org.jxmapviewer</groupId>
+             <artifactId>jxmapviewer2</artifactId>
+             <version>2.6</version>
++        </dependency>
++        <dependency>
++            <groupId>jakarta.xml.ws</groupId>
++            <artifactId>jakarta.xml.ws-api</artifactId>
++            <version>4.0.0</version>
++        </dependency>
++        <dependency>
++            <groupId>com.sun.xml.ws</groupId>
++            <artifactId>jaxws-rt</artifactId>
++            <version>4.0.2</version>
++        </dependency>
++        <dependency>
++            <groupId>jakarta.jws</groupId>
++            <artifactId>jakarta.jws-api</artifactId>
++            <version>3.0.0</version>
++        </dependency>
++        <dependency>
++            <groupId>jakarta.xml.bind</groupId>
++            <artifactId>jakarta.xml.bind-api</artifactId>
++            <version>4.0.0</version>
+         </dependency>
+     </dependencies>
+ 
++    <build>
++        <plugins>
++            <plugin>
++                <groupId>com.sun.xml.ws</groupId>
++                <artifactId>jaxws-maven-plugin</artifactId>
++                <version>4.0.1</version>
++                <executions>
++                    <execution>
++                        <goals>
++                            <goal>wsimport</goal>
++                        </goals>
++                        <configuration>
++                            <packageName>com.soap.ws.client.generated</packageName>
++                            <sourceDestDir>src/main/java</sourceDestDir>
++                            <wsdlUrls>
++                                <wsdlUrl>http://localhost:3000/MyService/PolyBikingService?wsdl</wsdlUrl>
++                            </wsdlUrls>
++                            <args>
++                                <arg>-Xnocompile</arg>
++                                <arg>-extension</arg>
++                            </args>
++                        </configuration>
++                    </execution>
++                </executions>
++            </plugin>
++        </plugins>
++    </build>
+ </project>
+\ No newline at end of file
+Index: src/main/java/polybiking/PolyBikingApplication.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package polybiking;\r\n\r\nimport org.jxmapviewer.viewer.GeoPosition;\r\nimport polybiking.map.MapView;\r\n\r\nimport java.util.Map;\r\nimport java.util.Scanner;\r\n\r\n/**\r\n * Main class of the PolyBiking application\r\n */\r\npublic class PolyBikingApplication {\r\n    private final CitiesList citiesList;\r\n    private final Scanner scanner;\r\n\r\n    public PolyBikingApplication() {\r\n        this.citiesList = CitiesList.getInstance();\r\n        this.scanner = new Scanner(System.in);\r\n\r\n        System.out.println(\"▷ PolyBiking Application ◁\\n\");\r\n    }\r\n\r\n    /**\r\n     * Run the application and display the map\r\n     */\r\n    public void run() {\r\n        System.out.println(\"► List of cities: \");\r\n        for (Map.Entry<String, GeoPosition> entry : this.citiesList.entrySet()) {\r\n            System.out.println(\"\\t\uD83C\uDFE1 \" + entry.getKey());\r\n        }\r\n\r\n        String origin = askForEnter(\"origin\");\r\n        String destination = askForEnter(\"destination\");\r\n\r\n        MapView mapView = new MapView(this.citiesList.get(origin), this.citiesList.get(destination));\r\n\r\n        System.out.println(\"\\n✅ Trip from \" + origin + \" to \" + destination + \" for \" + mapView.calculateTripTime() + \" !\");\r\n    }\r\n\r\n    /**\r\n     * Ask for a city name and check if it exists in the list\r\n     *\r\n     * @param useFor \"origin\" or \"destination\"\r\n     * @return the city name existing in the list\r\n     */\r\n    private String askForEnter(String useFor) {\r\n        String result = \"\";\r\n        while (result.isEmpty()) {\r\n            System.out.println(\"\\n● Enter \" + useFor + \": \");\r\n            result = scanner.nextLine();\r\n            if (!this.citiesList.containsKey(result)) {\r\n                System.out.println(\"❌ City not found\");\r\n                result = \"\";\r\n            }\r\n        }\r\n        return result;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/polybiking/PolyBikingApplication.java b/src/main/java/polybiking/PolyBikingApplication.java
+--- a/src/main/java/polybiking/PolyBikingApplication.java	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ b/src/main/java/polybiking/PolyBikingApplication.java	(date 1701273639098)
+@@ -1,5 +1,7 @@
+ package polybiking;
+ 
++import com.soap.ws.client.generated.IPolyBikingService;
++import com.soap.ws.client.generated.PolyBikingService;
+ import org.jxmapviewer.viewer.GeoPosition;
+ import polybiking.map.MapView;
+ 
+@@ -10,12 +12,15 @@
+  * Main class of the PolyBiking application
+  */
+ public class PolyBikingApplication {
++    private final IPolyBikingService polyBikingService;
+     private final CitiesList citiesList;
+     private final Scanner scanner;
+ 
+     public PolyBikingApplication() {
+         this.citiesList = CitiesList.getInstance();
+         this.scanner = new Scanner(System.in);
++        PolyBikingService bikingService = new PolyBikingService();
++        this.polyBikingService = bikingService.getBasicHttpBindingIPolyBikingService();
+ 
+         System.out.println("▷ PolyBiking Application ◁\n");
+     }
+Index: src/main/java/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import polybiking.PolyBikingApplication;\r\n\r\npublic class Main {\r\n    public static void main(String[] args) {\r\n        PolyBikingApplication application = new PolyBikingApplication();\r\n        application.run();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/Main.java b/src/main/java/Main.java
+--- a/src/main/java/Main.java	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ b/src/main/java/Main.java	(date 1701273639097)
+@@ -2,7 +2,7 @@
+ 
+ public class Main {
+     public static void main(String[] args) {
+-        PolyBikingApplication application = new PolyBikingApplication();
+-        application.run();
++        PolyBikingApplication app = new PolyBikingApplication();
++        app.run();
+     }
+ }
+Index: ../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/PolyBikingService.cs
+===================================================================
+diff --git a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/PolyBikingService.cs b/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/PolyBikingService.cs
+deleted file mode 100644
+--- a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/PolyBikingService.cs	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ /dev/null	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
+@@ -1,163 +0,0 @@
+-using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Net.Http;
+-using System.Text;
+-using System.Threading.Tasks;
+-using Newtonsoft.Json;
+-using Newtonsoft.Json.Linq;
+-
+-namespace ConsoleApp_for_Self_Hosted_WS
+-{
+-    class PolyBikingService : IPolyBikingService
+-    {
+-        static readonly HttpClient client = new HttpClient();
+-        async public Task<Path[]> Add(double[] start, double[] end)
+-        {
+-            StationInfo[] stations = await GetClosestStation(start, end);
+-            Console.WriteLine(stations[0].Name);
+-            Console.WriteLine(stations[1].Name);
+-            Path[] totalPath = new Path[3];
+-
+-            Path bufferPath = await GetPath(start, new double[] {stations[0].Position.Lng , stations[0].Position.Lat });
+-            bufferPath.type = "footPath";
+-            totalPath.Append(bufferPath);
+-            Console.WriteLine("test");
+-            
+-            bufferPath = await GetPath(new double[] { stations[0].Position.Lng, stations[0].Position.Lat }, new double[] {stations[1].Position.Lng , stations[1].Position.Lat });
+-            bufferPath.type = "bikePath";
+-            totalPath.Append(bufferPath);
+-            Console.WriteLine("test");
+-
+-            bufferPath = await GetPath(new double[] {stations[0].Position.Lng , stations[0].Position.Lat }, end);
+-            bufferPath.type = "footPath";
+-            totalPath.Append(bufferPath);
+-            Console.WriteLine("test");
+-
+-            return totalPath;
+-        }
+-
+-        async private Task<StationInfo[]> GetClosestStation(double[] start, double[] end)
+-        {
+-            StationInfo departingStation = null;
+-            StationInfo arrivalStation = null;
+-            string url = "https://api.jcdecaux.com/vls/v1/stations?apiKey=105a67e972bd8e364d7f4da5301dbaf4f314db90";
+-            HttpResponseMessage response = await client.GetAsync(url);
+-            response.EnsureSuccessStatusCode();
+-            string responseBody = await response.Content.ReadAsStringAsync();
+-            List<StationInfo> stations;
+-
+-            try
+-            {
+-            stations = JsonConvert.DeserializeObject<List<StationInfo>>(responseBody);
+-            }
+-            catch (Exception e){ 
+-                Console.WriteLine(e.Message); return null;
+-            }
+-
+-            stations = stations.Where(s => s.AvailableBikes > 0).ToList();
+-
+-            double minDistance = double.MaxValue;
+-            foreach (var station in stations)
+-            {
+-                double distance = CalculateDistance(start[1], start[0], station.Position.Lat, station.Position.Lng);
+-
+-                if (distance < minDistance)
+-                {
+-                    minDistance = distance;
+-                    departingStation = station;
+-                }
+-            }
+-            minDistance = double.MaxValue;
+-            foreach (var station in stations)
+-            {
+-                double distance = CalculateDistance(end[1], end[0], station.Position.Lat, station.Position.Lng);
+-
+-                if (distance < minDistance)
+-                {
+-                    minDistance = distance;
+-                    arrivalStation = station;
+-                }
+-            }
+-
+-            StationInfo[] funcResponse = new StationInfo[] { departingStation, arrivalStation };
+-            return funcResponse;
+-        }
+-        static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+-        {
+-            return Math.Sqrt(Math.Pow(lat2 - lat1, 2) + Math.Pow(lon2 - lon1, 2));
+-        }
+-
+-        async private Task<Path> GetPath(double[] coord1, double[] coord2)
+-        {
+-            string url = $"https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&start={coord1[0]},{coord1[1]}&end={coord2[0]},{coord2[1]}";
+-            HttpResponseMessage response = await client.GetAsync(url);
+-            response.EnsureSuccessStatusCode();
+-            string responseBody = await response.Content.ReadAsStringAsync();
+-            
+-            JObject responseJson = JObject.Parse(responseBody);
+-
+-            string geometryCoords = responseJson["features"][0]["geometry"]["coordinates"].ToString();
+-            List<List<double>> coordinatesList = JsonConvert.DeserializeObject<List<List<double>>>(geometryCoords);
+-            List<Position> positions = coordinatesList.Select(coord => new Position { Lat = coord[1], Lng = coord[0] }).ToList();
+-            Path myPath = new Path();
+-            myPath.coordinates = positions;
+-
+-            return myPath;
+-        }
+-    }
+-
+-    public class StationInfo
+-    {
+-        [JsonProperty("number")]
+-        public int Number { get; set; }
+-
+-        [JsonProperty("contract_name")]
+-        public string ContractName { get; set; }
+-
+-        [JsonProperty("name")]
+-        public string Name { get; set; }
+-
+-        [JsonProperty("address")]
+-        public string Address { get; set; }
+-
+-        [JsonProperty("position")]
+-        public Position Position { get; set; }
+-
+-        [JsonProperty("banking")]
+-        public bool Banking { get; set; }
+-
+-        [JsonProperty("bonus")]
+-        public bool Bonus { get; set; }
+-
+-        [JsonProperty("bike_stands")]
+-        public int BikeStands { get; set; }
+-
+-        [JsonProperty("available_bike_stands")]
+-        public int AvailableBikeStands { get; set; }
+-
+-        [JsonProperty("available_bikes")]
+-        public int AvailableBikes { get; set; }
+-
+-        [JsonProperty("status")]
+-        public string Status { get; set; }
+-
+-        [JsonProperty("last_update")]
+-        public long? LastUpdate { get; set; }
+-    }
+-
+-    public class Position
+-    {
+-        [JsonProperty("lat")]
+-        public double Lat { get; set; }
+-
+-        [JsonProperty("lng")]
+-        public double Lng { get; set; }
+-    }
+-
+-    public class Path
+-    {
+-        public string type;
+-        public List<Position> coordinates;
+-    }
+-}
+Index: ../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/App.config
+===================================================================
+diff --git a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/App.config b/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/App.config
+deleted file mode 100644
+--- a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/App.config	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ /dev/null	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="utf-8" ?>
+-<configuration>
+-    <startup> 
+-        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.7.2" />
+-    </startup>
+-</configuration>
+\ No newline at end of file
+Index: ../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/Program.cs
+===================================================================
+diff --git a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/Program.cs b/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/Program.cs
+deleted file mode 100644
+--- a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/Program.cs	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ /dev/null	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
+@@ -1,50 +0,0 @@
+-using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-
+-// add the WCF ServiceModel namespace 
+-using System.ServiceModel;
+-using System.ServiceModel.Description;
+-
+-namespace ConsoleApp_for_Self_Hosted_WS
+-{
+-    class Program
+-    {
+-        static void Main(string[] args)
+-        {
+-            //Create a URI to serve as the base address
+-            //Be careful to run Visual Studio as Admistrator or to allow VS to open new port netsh command. 
+-            // Example : netsh http add urlacl url=http://+:80/MyUri user=DOMAIN\user
+-            Uri httpUrl = new Uri("http://localhost:3000/MyService/PolyBikingService");
+-
+-            //Create ServiceHost
+-            ServiceHost host = new ServiceHost(typeof(PolyBikingService), httpUrl);
+-
+-            // Multiple end points can be added to the Service using AddServiceEndpoint() method.
+-            // Host.Open() will run the service, so that it can be used by any client.
+-
+-            // Example adding :
+-            // Uri tcpUrl = new Uri("net.tcp://localhost:8090/MyService/PolyBikingService");
+-            // ServiceHost host = new ServiceHost(typeof(MyCalculatorService.PolyBikingService), httpUrl, tcpUrl);
+-
+-            //Add a service endpoint
+-            host.AddServiceEndpoint(typeof(IPolyBikingService), new WSHttpBinding(), ""); 
+-
+-            //Enable metadata exchange
+-            ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
+-            smb.HttpGetEnabled = true;
+-            host.Description.Behaviors.Add(smb);
+-            
+-            //Start the Service
+-            host.Open();
+-
+-            Console.WriteLine("Service is host at " + DateTime.Now.ToString());
+-            Console.WriteLine("Host is running... Press <Enter> key to stop");
+-            Console.ReadLine();
+-
+-        }
+-    }
+-}
+Index: ../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/IPolyBikingService.cs
+===================================================================
+diff --git a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/IPolyBikingService.cs b/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/IPolyBikingService.cs
+deleted file mode 100644
+--- a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/IPolyBikingService.cs	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ /dev/null	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
+@@ -1,20 +0,0 @@
+-using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-// add assembly System.ServiceModel  and using for the corresponding model
+-using System.ServiceModel;
+-
+-namespace ConsoleApp_for_Self_Hosted_WS
+-{
+-
+-    [ServiceContract()]
+-    public interface IPolyBikingService
+-    {
+-        [OperationContract()]
+-        Task<Path[]> Add(double[] coord1, double[] coord2);
+-    }
+-
+-
+-}
+Index: ../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/packages.config
+===================================================================
+diff --git a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/packages.config b/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/packages.config
+deleted file mode 100644
+--- a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/packages.config	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ /dev/null	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
+@@ -1,4 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<packages>
+-  <package id="Newtonsoft.Json" version="13.0.3" targetFramework="net472" />
+-</packages>
+\ No newline at end of file
+Index: ../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/Properties/AssemblyInfo.cs
+===================================================================
+diff --git a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/Properties/AssemblyInfo.cs b/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/Properties/AssemblyInfo.cs
+deleted file mode 100644
+--- a/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/Properties/AssemblyInfo.cs	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ /dev/null	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
+@@ -1,36 +0,0 @@
+-using System.Reflection;
+-using System.Runtime.CompilerServices;
+-using System.Runtime.InteropServices;
+-
+-// Les informations générales relatives à un assembly dépendent de
+-// l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
+-// associées à un assembly.
+-[assembly: AssemblyTitle("ConsoleApp_for_Self_Hosted_WS")]
+-[assembly: AssemblyDescription("")]
+-[assembly: AssemblyConfiguration("")]
+-[assembly: AssemblyCompany("")]
+-[assembly: AssemblyProduct("ConsoleApp_for_Self_Hosted_WS")]
+-[assembly: AssemblyCopyright("Copyright ©  2020")]
+-[assembly: AssemblyTrademark("")]
+-[assembly: AssemblyCulture("")]
+-
+-// L'affectation de la valeur false à ComVisible rend les types invisibles dans cet assembly
+-// aux composants COM. Si vous devez accéder à un type dans cet assembly à partir de
+-// COM, affectez la valeur true à l'attribut ComVisible sur ce type.
+-[assembly: ComVisible(false)]
+-
+-// Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
+-[assembly: Guid("5037ec61-61e2-4253-9ed3-95d9344673c9")]
+-
+-// Les informations de version pour un assembly se composent des quatre valeurs suivantes :
+-//
+-//      Version principale
+-//      Version secondaire
+-//      Numéro de build
+-//      Révision
+-//
+-// Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut
+-// en utilisant '*', comme indiqué ci-dessous :
+-// [assembly: AssemblyVersion("1.0.*")]
+-[assembly: AssemblyVersion("1.0.0.0")]
+-[assembly: AssemblyFileVersion("1.0.0.0")]
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"Encoding\">\r\n    <file url=\"file://$PROJECT_DIR$/src/main/java\" charset=\"UTF-8\" />\r\n    <file url=\"file://$PROJECT_DIR$/src/main/resources\" charset=\"UTF-8\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/encodings.xml b/.idea/encodings.xml
+--- a/.idea/encodings.xml	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ b/.idea/encodings.xml	(date 1701273639094)
+@@ -3,5 +3,6 @@
+   <component name="Encoding">
+     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
++    <file url="file://$PROJECT_DIR$/target/generated-sources" charset="UTF-8" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"63605a36-5162-40ac-8c0b-8e0605c9f1de\" name=\"Changes\" comment=\"Finish the Heavy Client Java\">\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/polybiking/map/FancyWaypointRenderer.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/polybiking/map/MultiplyComposite.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/polybiking/map/MyWaypoint.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/resources/destination.png\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/resources/origin.png\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/resources/station.png\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/pom.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/pom.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/polybiking/map/MapView.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/polybiking/map/MapView.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$/../..\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 0\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2YDXN5HL9CuIad50aFo85b1qkOi\" />\r\n  <component name=\"ProjectLevelVcsManager\">\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"autoscrollFromSource\" value=\"true\" />\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showExcludedFiles\" value=\"false\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n    <option name=\"showScratchesAndConsoles\" value=\"false\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"ASKED_SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\r\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\r\n    \"SONARLINT_PRECOMMIT_ANALYSIS\": \"true\",\r\n    \"WebServerToolWindowFactoryState\": \"false\",\r\n    \"git-widget-placeholder\": \"master\",\r\n    \"last_opened_file_path\": \"C:/Users/Admin/OneDrive - Université Nice Sophia Antipolis/Middleware and Service Oriented Computing/project-polybiking/Client/PolyBikingClient/src/main/resources\",\r\n    \"node.js.detected.package.eslint\": \"true\",\r\n    \"node.js.detected.package.tslint\": \"true\",\r\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\r\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"settings.editor.selected.configurable\": \"reference.settings.project.maven.repository.indices\",\r\n    \"vue.rearranger.settings.migration\": \"true\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CreateClassDialog.RecentsKey\">\r\n      <recent name=\"\" />\r\n    </key>\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Admin\\OneDrive - Université Nice Sophia Antipolis\\Middleware and Service Oriented Computing\\project-polybiking\\Client\\PolyBikingClient\\src\\main\\resources\" />\r\n      <recent name=\"C:\\Users\\Admin\\OneDrive - Université Nice Sophia Antipolis\\Middleware and Service Oriented Computing\\project-polybiking\\Client\\PolyBikingClient\\src\\main\\java\\polybiking\\map\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Admin\\OneDrive - Université Nice Sophia Antipolis\\Middleware and Service Oriented Computing\\project-polybiking\\Client\\PolyBikingClient\\src\\main\\resources\" />\r\n      <recent name=\"C:\\Users\\Admin\\OneDrive - Université Nice Sophia Antipolis\\Middleware and Service Oriented Computing\\project-polybiking\\Client\\PolyBikingClient\\src\\main\\java\\polybiking\\map\" />\r\n      <recent name=\"C:\\Users\\Admin\\OneDrive - Université Nice Sophia Antipolis\\Middleware and Service Oriented Computing\\project-polybiking\\Client\\PolyBikingClient\" />\r\n      <recent name=\"C:\\Users\\Admin\\OneDrive - Université Nice Sophia Antipolis\\Middleware and Service Oriented Computing\\project-polybiking\\Client\\PolyBikingClient\\src\" />\r\n    </key>\r\n    <key name=\"CopyClassDialog.RECENTS_KEY\">\r\n      <recent name=\"polybiking.map\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Application.Main\">\r\n    <configuration name=\"Demo\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Demo\" />\r\n      <module name=\"PolyBikingClient\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"DemoWaypoint\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"DemoWaypoint\" />\r\n      <module name=\"PolyBikingClient\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Main\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Main\" />\r\n      <module name=\"PolyBikingClient\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"PolyBiking\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"polybiking.PolyBiking\" />\r\n      <module name=\"PolyBikingClient\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Sample7\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Sample7\" />\r\n      <module name=\"PolyBikingClient\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.Main\" />\r\n        <item itemvalue=\"Application.PolyBiking\" />\r\n        <item itemvalue=\"Application.Sample7\" />\r\n        <item itemvalue=\"Application.DemoWaypoint\" />\r\n        <item itemvalue=\"Application.Demo\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"63605a36-5162-40ac-8c0b-8e0605c9f1de\" name=\"Changes\" comment=\"\" />\r\n      <created>1700061082964</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1700061082964</updated>\r\n      <workItem from=\"1700061084089\" duration=\"1074000\" />\r\n      <workItem from=\"1700062195389\" duration=\"1733000\" />\r\n      <workItem from=\"1700388745174\" duration=\"836000\" />\r\n      <workItem from=\"1700402939980\" duration=\"27000\" />\r\n      <workItem from=\"1700662265951\" duration=\"777000\" />\r\n      <workItem from=\"1700663467313\" duration=\"6561000\" />\r\n      <workItem from=\"1700677203370\" duration=\"3221000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Add maven to front project\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1700061208599</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1700061208599</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Create a JMapViewer demo\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1700062316127</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1700062316127</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Modify .gitignore\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1700062366644</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1700062366644</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Finish the Heavy Client Java\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1700669076896</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1700669076896</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"5\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"master\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Create README.md\" />\r\n    <MESSAGE value=\"Add maven to front project\" />\r\n    <MESSAGE value=\"Create a JMapViewer demo\" />\r\n    <MESSAGE value=\"Modify .gitignore\" />\r\n    <MESSAGE value=\"Finish the Heavy Client Java\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Finish the Heavy Client Java\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 48687e92a2f21187094415cb5417c6ab947404f5)
++++ b/.idea/workspace.xml	(date 1701273639095)
+@@ -4,16 +4,20 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="63605a36-5162-40ac-8c0b-8e0605c9f1de" name="Changes" comment="Finish the Heavy Client Java">
+-      <change afterPath="$PROJECT_DIR$/src/main/java/polybiking/map/FancyWaypointRenderer.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/polybiking/map/MultiplyComposite.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/polybiking/map/MyWaypoint.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/resources/destination.png" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/resources/origin.png" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/resources/station.png" afterDir="false" />
++    <list default="true" id="63605a36-5162-40ac-8c0b-8e0605c9f1de" name="Changes" comment="Add logo">
++      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/polybiking/map/MapView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/polybiking/map/MapView.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/polybiking/PolyBikingApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/polybiking/PolyBikingApplication.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/App.config" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/IPolyBikingService.cs" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/PolyBikingServer.csproj" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/PolyBikingService.cs" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/Program.cs" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/Properties/AssemblyInfo.cs" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/ConsoleApp_for_Self_Hosted_WS/packages.config" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/ConsoleApp_for_Self_Hosted_WS/PolyBikingServer.sln" beforeDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -44,25 +48,29 @@
+     <option name="showLibraryContents" value="true" />
+     <option name="showScratchesAndConsoles" value="false" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+-    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
+-    "WebServerToolWindowFactoryState": "false",
+-    "git-widget-placeholder": "master",
+-    "last_opened_file_path": "C:/Users/Admin/OneDrive - Université Nice Sophia Antipolis/Middleware and Service Oriented Computing/project-polybiking/Client/PolyBikingClient/src/main/resources",
+-    "node.js.detected.package.eslint": "true",
+-    "node.js.detected.package.tslint": "true",
+-    "node.js.selected.package.eslint": "(autodetect)",
+-    "node.js.selected.package.tslint": "(autodetect)",
+-    "nodejs_package_manager_path": "npm",
+-    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices",
+-    "vue.rearranger.settings.migration": "true"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
++    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
++    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
++    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
++    &quot;last_opened_file_path&quot;: &quot;C:/Users/Admin/OneDrive - Université Nice Sophia Antipolis/Middleware and Service Oriented Computing/project-polybiking/Client/PolyBikingClient/src/main/resources&quot;,
++    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
++    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
++    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
++    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
++    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
++    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
++    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
++    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.repository.indices&quot;,
++    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RecentsManager">
+     <key name="CreateClassDialog.RecentsKey">
+       <recent name="" />
+@@ -80,6 +88,14 @@
+     <key name="CopyClassDialog.RECENTS_KEY">
+       <recent name="polybiking.map" />
+     </key>
++  </component>
++  <component name="RunAnythingCache">
++    <option name="myCommands">
++      <command value="mvn package" />
++      <command value="mvn clean generate-sources " />
++      <command value="mvn clean jaxws:wsimport" />
++      <command value="mvn clean install" />
++    </option>
+   </component>
+   <component name="RunManager" selected="Application.Main">
+     <configuration name="Demo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+@@ -141,7 +157,22 @@
+       <workItem from="1700402939980" duration="27000" />
+       <workItem from="1700662265951" duration="777000" />
+       <workItem from="1700663467313" duration="6561000" />
+-      <workItem from="1700677203370" duration="3221000" />
++      <workItem from="1700677203370" duration="3308000" />
++      <workItem from="1700680594390" duration="21000" />
++      <workItem from="1700761460410" duration="640000" />
++      <workItem from="1700846124845" duration="2000" />
++      <workItem from="1700848305738" duration="599000" />
++      <workItem from="1700998773651" duration="525000" />
++      <workItem from="1701018479128" duration="88000" />
++      <workItem from="1701024190590" duration="517000" />
++      <workItem from="1701080283585" duration="1279000" />
++      <workItem from="1701093238367" duration="5106000" />
++      <workItem from="1701112795962" duration="1514000" />
++      <workItem from="1701179957401" duration="106000" />
++      <workItem from="1701180267894" duration="146000" />
++      <workItem from="1701260860113" duration="2095000" />
++      <workItem from="1701272328265" duration="816000" />
++      <workItem from="1701273262835" duration="48000" />
+     </task>
+     <task id="LOCAL-00001" summary="Add maven to front project">
+       <option name="closed" value="true" />
+@@ -175,7 +206,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1700669076896</updated>
+     </task>
+-    <option name="localTasksCounter" value="5" />
++    <task id="LOCAL-00005" summary="Add logo">
++      <option name="closed" value="true" />
++      <created>1700680510988</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1700680510988</updated>
++    </task>
++    <option name="localTasksCounter" value="6" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -205,11 +244,13 @@
+     </option>
+   </component>
+   <component name="VcsManagerConfiguration">
++    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+     <MESSAGE value="Create README.md" />
+     <MESSAGE value="Add maven to front project" />
+     <MESSAGE value="Create a JMapViewer demo" />
+     <MESSAGE value="Modify .gitignore" />
+     <MESSAGE value="Finish the Heavy Client Java" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Finish the Heavy Client Java" />
++    <MESSAGE value="Add logo" />
++    <option name="LAST_COMMIT_MESSAGE" value="Add logo" />
+   </component>
+ </project>
+\ No newline at end of file

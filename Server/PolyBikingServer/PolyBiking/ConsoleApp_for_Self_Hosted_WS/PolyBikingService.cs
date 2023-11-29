@@ -2,42 +2,64 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ConsoleApp_for_Self_Hosted_WS
+namespace PolyBiking
 {
     class PolyBikingService : IPolyBikingService
     {
         static readonly HttpClient client = new HttpClient();
-        async public Task<Path[]> Add(double[] start, double[] end)
+        async public Task<Path[]> ComputeTrip(string addressOrigin, string addressDestination)
         {
-            StationInfo[] stations = await GetClosestStation(start, end);
-            Console.WriteLine(stations[0].Name);
-            Console.WriteLine(stations[1].Name);
-            Path[] totalPath = new Path[3];
+            Position origin = await getPositionFromAddress(addressOrigin);
+            Position destination = await getPositionFromAddress(addressDestination);
 
-            Path bufferPath = await GetPath(start, new double[] {stations[0].Position.Lng , stations[0].Position.Lat });
-            bufferPath.type = "footPath";
-            totalPath.Append(bufferPath);
-            Console.WriteLine("test");
-            
-            bufferPath = await GetPath(new double[] { stations[0].Position.Lng, stations[0].Position.Lat }, new double[] {stations[1].Position.Lng , stations[1].Position.Lat });
-            bufferPath.type = "bikePath";
-            totalPath.Append(bufferPath);
-            Console.WriteLine("test");
+            StationInfo[] stations = await GetClosestStation(origin, destination);
 
-            bufferPath = await GetPath(new double[] {stations[0].Position.Lng , stations[0].Position.Lat }, end);
-            bufferPath.type = "footPath";
-            totalPath.Append(bufferPath);
-            Console.WriteLine("test");
+            Path firstFootPath = await GetPath(origin, stations[0].Position);
+            firstFootPath.type = "footPath";
 
-            return totalPath;
+            Path bikePath = await GetPath(stations[0].Position, stations[1].Position);
+            bikePath.type = "bikePath";
+
+            Path secondFootPath = await GetPath(stations[1].Position, destination);
+            secondFootPath.type = "footPath";
+
+            return new Path[] { firstFootPath, bikePath, secondFootPath };
         }
 
-        async private Task<StationInfo[]> GetClosestStation(double[] start, double[] end)
+        private Task<Path> GetPath(Position origin, double[] doubles)
+        {
+            throw new NotImplementedException();
+        }
+
+        async private Task<Position> getPositionFromAddress(string address)
+        {
+            StationInfo departingStation = null;
+            StationInfo arrivalStation = null;
+            string url = "https://api.openrouteservice.org/geocode/autocomplete?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&text=" + address + "&boundary.country=FR&layers=locality,address";
+            HttpResponseMessage response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            JObject responseJson = JObject.Parse(responseBody);
+
+            Position positionResult = new Position();
+            if (responseJson["features"].Count() > 0)
+            {
+                positionResult.Lat = responseJson["features"][0]["geometry"]["coordinates"][1].Value<double>();
+                positionResult.Lng = responseJson["features"][0]["geometry"]["coordinates"][0].Value<double>();
+            }
+            else
+            {
+                throw new Exception("No position found for this address" + address);
+            }
+
+            return positionResult;
+        }
+
+        async private Task<StationInfo[]> GetClosestStation(Position origin, Position destination)
         {
             StationInfo departingStation = null;
             StationInfo arrivalStation = null;
@@ -49,9 +71,10 @@ namespace ConsoleApp_for_Self_Hosted_WS
 
             try
             {
-            stations = JsonConvert.DeserializeObject<List<StationInfo>>(responseBody);
+                stations = JsonConvert.DeserializeObject<List<StationInfo>>(responseBody);
             }
-            catch (Exception e){ 
+            catch (Exception e)
+            {
                 Console.WriteLine(e.Message); return null;
             }
 
@@ -60,7 +83,7 @@ namespace ConsoleApp_for_Self_Hosted_WS
             double minDistance = double.MaxValue;
             foreach (var station in stations)
             {
-                double distance = CalculateDistance(start[1], start[0], station.Position.Lat, station.Position.Lng);
+                double distance = CalculateDistance(origin.Lat, origin.Lng, station.Position.Lat, station.Position.Lng);
 
                 if (distance < minDistance)
                 {
@@ -71,9 +94,9 @@ namespace ConsoleApp_for_Self_Hosted_WS
             minDistance = double.MaxValue;
             foreach (var station in stations)
             {
-                double distance = CalculateDistance(end[1], end[0], station.Position.Lat, station.Position.Lng);
+                double distance = CalculateDistance(destination.Lat, destination.Lng, station.Position.Lat, station.Position.Lng);
 
-                if (distance < minDistance)
+                if (station.ContractName == departingStation.ContractName && distance < minDistance)
                 {
                     minDistance = distance;
                     arrivalStation = station;
@@ -83,25 +106,28 @@ namespace ConsoleApp_for_Self_Hosted_WS
             StationInfo[] funcResponse = new StationInfo[] { departingStation, arrivalStation };
             return funcResponse;
         }
+
         static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
             return Math.Sqrt(Math.Pow(lat2 - lat1, 2) + Math.Pow(lon2 - lon1, 2));
         }
 
-        async private Task<Path> GetPath(double[] coord1, double[] coord2)
+        async private Task<Path> GetPath(Position start, Position end)
         {
-            string url = $"https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&start={coord1[0]},{coord1[1]}&end={coord2[0]},{coord2[1]}";
+            string url = $"https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&start={start.Lng},{start.Lat}&end={end.Lng},{end.Lat}";
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
-            
+
             JObject responseJson = JObject.Parse(responseBody);
 
             string geometryCoords = responseJson["features"][0]["geometry"]["coordinates"].ToString();
+            //Console.WriteLine(geometryCoords);
             List<List<double>> coordinatesList = JsonConvert.DeserializeObject<List<List<double>>>(geometryCoords);
-            List<Position> positions = coordinatesList.Select(coord => new Position { Lat = coord[1], Lng = coord[0] }).ToList();
-            Path myPath = new Path();
-            myPath.coordinates = positions;
+            List<Position> positions = coordinatesList.Select(coord => new Position(coord[1], coord[0])).ToList();
+            //Console.WriteLine(positions[0].Lat);
+            Path myPath = new Path(positions);
+            //Console.WriteLine(myPath.coordinates[0].Lng);
 
             return myPath;
         }
@@ -153,11 +179,25 @@ namespace ConsoleApp_for_Self_Hosted_WS
 
         [JsonProperty("lng")]
         public double Lng { get; set; }
+
+        public Position(double lat, double lng)
+        {
+            Lat = lat;
+            Lng = lng;
+        }
+
+        public Position()
+        {
+        }
     }
 
     public class Path
     {
         public string type;
         public List<Position> coordinates;
+        public Path(List<Position> coordinates)
+        {
+            this.coordinates = coordinates;
+        }
     }
 }
