@@ -100,7 +100,7 @@ namespace PolyBiking
             {
                 double distance = CalculateDistance(destination.Lat, destination.Lng, station.Position.Lat, station.Position.Lng);
 
-                if (station.ContractName == departingStation.ContractName && distance < minDistance)
+                if (station.ContractName == departingStation.ContractName && distance < minDistance && station.Number != departingStation.Number)
                 {
                     minDistance = distance;
                     arrivalStation = station;

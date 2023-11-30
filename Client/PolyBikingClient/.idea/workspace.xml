@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="63605a36-5162-40ac-8c0b-8e0605c9f1de" name="Changes" comment="Add visibility" />
+    <list default="true" id="63605a36-5162-40ac-8c0b-8e0605c9f1de" name="Changes" comment="Fix mistake with the response">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -143,6 +145,8 @@
       <workItem from="1701370326332" duration="1184000" />
       <workItem from="1701380694965" duration="5947000" />
       <workItem from="1701386668823" duration="39000" />
+      <workItem from="1701386778262" duration="206000" />
+      <workItem from="1701386997256" duration="621000" />
     </task>
     <task id="LOCAL-00001" summary="Add maven to front project">
       <option name="closed" value="true" />
@@ -200,7 +204,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701386698482</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Fix mistake with the response">
+      <option name="closed" value="true" />
+      <created>1701386976728</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1701386976728</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -239,6 +251,7 @@
     <MESSAGE value="Connect Back to Front" />
     <MESSAGE value="Add logic for the path selection and add more information about it" />
     <MESSAGE value="Add visibility" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add visibility" />
+    <MESSAGE value="Fix mistake with the response" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix mistake with the response" />
   </component>
 </project>
