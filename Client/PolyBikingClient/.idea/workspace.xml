@@ -4,26 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="63605a36-5162-40ac-8c0b-8e0605c9f1de" name="Changes" comment="Connect Back to Front">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ArrayOfStep.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ArrayOfint.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ArrayOfstring.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/BikingResponce.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/PathType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/Step.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ComputeTripResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ComputeTripResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/IPolyBikingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/IPolyBikingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ObjectFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/ObjectFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/soap/ws/client/generated/Path.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/polybiking/CitiesList.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/polybiking/PolyBikingApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/polybiking/PolyBikingApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/polybiking/map/MapView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/polybiking/map/MapView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/IPolyBikingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/IPolyBikingService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/PolyBikingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/PolyBikingService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Server/PolyBikingServer/PolyBiking/ConsoleApp_for_Self_Hosted_WS/Program.cs" afterDir="false" />
-    </list>
+    <list default="true" id="63605a36-5162-40ac-8c0b-8e0605c9f1de" name="Changes" comment="Add logic for the path selection and add more information about it" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -160,7 +141,7 @@
       <workItem from="1701280154467" duration="1959000" />
       <workItem from="1701344309800" duration="1774000" />
       <workItem from="1701370326332" duration="1184000" />
-      <workItem from="1701380694965" duration="5855000" />
+      <workItem from="1701380694965" duration="5947000" />
     </task>
     <task id="LOCAL-00001" summary="Add maven to front project">
       <option name="closed" value="true" />
@@ -202,7 +183,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701281390808</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Add logic for the path selection and add more information about it">
+      <option name="closed" value="true" />
+      <created>1701386639898</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1701386639898</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -239,6 +228,7 @@
     <MESSAGE value="Modify .gitignore" />
     <MESSAGE value="Finish the Heavy Client Java" />
     <MESSAGE value="Connect Back to Front" />
-    <option name="LAST_COMMIT_MESSAGE" value="Connect Back to Front" />
+    <MESSAGE value="Add logic for the path selection and add more information about it" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add logic for the path selection and add more information about it" />
   </component>
 </project>

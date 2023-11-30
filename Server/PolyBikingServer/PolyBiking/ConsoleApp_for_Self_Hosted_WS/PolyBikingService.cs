@@ -132,13 +132,16 @@ namespace PolyBiking
                 return null;
             }
             string geometryCoords = responseJson["features"][0]["geometry"]["coordinates"].ToString();
+
             List<List<double>> coordinatesList = JsonConvert.DeserializeObject<List<List<double>>>(geometryCoords);
             List<Position> positions = coordinatesList.Select(coord => new Position(coord[1], coord[0])).ToList();
+
             Path myPath = new Path(positions);
             myPath.distance = responseJson["features"][0]["properties"]["summary"]["distance"].Value<double>();
             myPath.duration = responseJson["features"][0]["properties"]["summary"]["duration"].Value<double>();
-            string json = responseJson["features"][0]["properties"]["segments"][0]["steps"].ToString();
-            myPath.steps = JsonConvert.DeserializeObject<List<Step>>(json);
+
+            string stepsList = responseJson["features"][0]["properties"]["segments"][0]["steps"].ToString();
+            myPath.steps = JsonConvert.DeserializeObject<List<Step>>(stepsList);
             myPath.type = pathType;
             return myPath;
         }
