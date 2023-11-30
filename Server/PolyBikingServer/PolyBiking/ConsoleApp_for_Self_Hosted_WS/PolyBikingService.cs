@@ -15,9 +15,9 @@ namespace PolyBiking
         static readonly HttpClient client = new HttpClient();
 
         // Main function of the service, compute the best path between two addresses
-        async public Task<BikingResponce> ComputeTrip(string addressOrigin, string addressDestination)
+        async public Task<BikingResponse> ComputeTrip(string addressOrigin, string addressDestination)
         {
-            BikingResponce responce = new BikingResponce();
+            BikingResponse responce = new BikingResponse();
             Position origin = await getPositionFromAddress(addressOrigin);
             Position destination = await getPositionFromAddress(addressDestination);
 
@@ -163,9 +163,9 @@ namespace PolyBiking
         }
 
         // Method to create the responce object
-        private BikingResponce CreateBikingResponse(List<Path> paths)
+        private BikingResponse CreateBikingResponse(List<Path> paths)
         {
-            return new BikingResponce
+            return new BikingResponse
             {
                 Paths = paths,
                 TotalDistance = paths.Sum(p => p.distance),
@@ -253,7 +253,7 @@ namespace PolyBiking
         public List<int> WayPoints { get; set; }
     }
 
-    public class BikingResponce
+    public class BikingResponse
     {
         public List<Path> Paths;
         public List<Step> steps;

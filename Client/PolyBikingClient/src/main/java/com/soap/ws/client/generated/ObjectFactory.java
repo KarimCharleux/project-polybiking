@@ -28,7 +28,7 @@ import jakarta.xml.bind.annotation.XmlRegistry;
 @XmlRegistry
 public class ObjectFactory {
 
-    private static final QName _BikingResponce_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "BikingResponce");
+    private static final QName _BikingResponse_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "BikingResponse");
     private static final QName _ArrayOfPath_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "ArrayOfPath");
     private static final QName _Path_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Path");
     private static final QName _ArrayOfPosition_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "ArrayOfPosition");
@@ -66,7 +66,7 @@ public class ObjectFactory {
     private static final QName _StepWayPoints_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "WayPoints");
     private static final QName _PathCoordinates_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "coordinates");
     private static final QName _PathSteps_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "steps");
-    private static final QName _BikingResponcePaths_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Paths");
+    private static final QName _BikingResponsePaths_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Paths");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.soap.ws.client.generated
@@ -96,13 +96,13 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BikingResponce }
+     * Create an instance of {@link BikingResponse }
      * 
      * @return
-     *     the new instance of {@link BikingResponce }
+     *     the new instance of {@link BikingResponse }
      */
-    public BikingResponce createBikingResponce() {
-        return new BikingResponce();
+    public BikingResponse createBikingResponse() {
+        return new BikingResponse();
     }
 
     /**
@@ -176,16 +176,16 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BikingResponce }{@code >}
+     * Create an instance of {@link JAXBElement }{@code <}{@link BikingResponse }{@code >}
      * 
      * @param value
      *     Java instance representing xml element's value.
      * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link BikingResponce }{@code >}
+     *     the new instance of {@link JAXBElement }{@code <}{@link BikingResponse }{@code >}
      */
-    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "BikingResponce")
-    public JAXBElement<BikingResponce> createBikingResponce(BikingResponce value) {
-        return new JAXBElement<>(_BikingResponce_QNAME, BikingResponce.class, null, value);
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "BikingResponse")
+    public JAXBElement<BikingResponse> createBikingResponse(BikingResponse value) {
+        return new JAXBElement<>(_BikingResponse_QNAME, BikingResponse.class, null, value);
     }
 
     /**
@@ -592,16 +592,16 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BikingResponce }{@code >}
+     * Create an instance of {@link JAXBElement }{@code <}{@link BikingResponse }{@code >}
      * 
      * @param value
      *     Java instance representing xml element's value.
      * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link BikingResponce }{@code >}
+     *     the new instance of {@link JAXBElement }{@code <}{@link BikingResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "ComputeTripResult", scope = ComputeTripResponse.class)
-    public JAXBElement<BikingResponce> createComputeTripResponseComputeTripResult(BikingResponce value) {
-        return new JAXBElement<>(_ComputeTripResponseComputeTripResult_QNAME, BikingResponce.class, ComputeTripResponse.class, value);
+    public JAXBElement<BikingResponse> createComputeTripResponseComputeTripResult(BikingResponse value) {
+        return new JAXBElement<>(_ComputeTripResponseComputeTripResult_QNAME, BikingResponse.class, ComputeTripResponse.class, value);
     }
 
     /**
@@ -677,9 +677,9 @@ public class ObjectFactory {
      * @return
      *     the new instance of {@link JAXBElement }{@code <}{@link ArrayOfPath }{@code >}
      */
-    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "Paths", scope = BikingResponce.class)
-    public JAXBElement<ArrayOfPath> createBikingResponcePaths(ArrayOfPath value) {
-        return new JAXBElement<>(_BikingResponcePaths_QNAME, ArrayOfPath.class, BikingResponce.class, value);
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "Paths", scope = BikingResponse.class)
+    public JAXBElement<ArrayOfPath> createBikingResponsePaths(ArrayOfPath value) {
+        return new JAXBElement<>(_BikingResponsePaths_QNAME, ArrayOfPath.class, BikingResponse.class, value);
     }
 
     /**
@@ -690,9 +690,9 @@ public class ObjectFactory {
      * @return
      *     the new instance of {@link JAXBElement }{@code <}{@link ArrayOfStep }{@code >}
      */
-    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "steps", scope = BikingResponce.class)
-    public JAXBElement<ArrayOfStep> createBikingResponceSteps(ArrayOfStep value) {
-        return new JAXBElement<>(_PathSteps_QNAME, ArrayOfStep.class, BikingResponce.class, value);
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "steps", scope = BikingResponse.class)
+    public JAXBElement<ArrayOfStep> createBikingResponseSteps(ArrayOfStep value) {
+        return new JAXBElement<>(_PathSteps_QNAME, ArrayOfStep.class, BikingResponse.class, value);
     }
 
 }

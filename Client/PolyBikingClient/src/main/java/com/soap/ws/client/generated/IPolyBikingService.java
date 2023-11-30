@@ -28,13 +28,13 @@ public interface IPolyBikingService {
      * @param addressDestination
      * @param addressOrigin
      * @return
-     *     returns com.soap.ws.client.generated.BikingResponce
+     *     returns com.soap.ws.client.generated.BikingResponse
      */
     @WebMethod(operationName = "ComputeTrip", action = "http://tempuri.org/IPolyBikingService/ComputeTrip")
     @WebResult(name = "ComputeTripResult", targetNamespace = "http://tempuri.org/")
     @RequestWrapper(localName = "ComputeTrip", targetNamespace = "http://tempuri.org/", className = "com.soap.ws.client.generated.ComputeTrip")
     @ResponseWrapper(localName = "ComputeTripResponse", targetNamespace = "http://tempuri.org/", className = "com.soap.ws.client.generated.ComputeTripResponse")
-    public BikingResponce computeTrip(
+    public BikingResponse computeTrip(
         @WebParam(name = "addressOrigin", targetNamespace = "http://tempuri.org/")
         String addressOrigin,
         @WebParam(name = "addressDestination", targetNamespace = "http://tempuri.org/")

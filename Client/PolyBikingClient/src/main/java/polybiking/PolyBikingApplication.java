@@ -30,24 +30,24 @@ public class PolyBikingApplication {
         System.out.println("\n⏳ Computing trip ...\n");
 
         // Make the request to the server and get the response
-        BikingResponce responce;
+        BikingResponse response;
         try {
-            responce = polyBikingService.computeTrip(origin, destination);
+            response = polyBikingService.computeTrip(origin, destination);
         } catch (Exception e) {
             System.out.println("❌ Error: " + e.getMessage());
             return;
         }
 
         // Display the map with the paths
-        MapView map = new MapView(responce.getPaths().getValue());
+        MapView map = new MapView(response.getPaths().getValue());
         map.display();
 
-        if (responce.getPaths().getValue().getPath() == null || responce.getPaths().getValue().getPath().isEmpty()) {
+        if (response.getPaths().getValue().getPath() == null || response.getPaths().getValue().getPath().isEmpty()) {
             System.out.println("\n❌ No path found between " + origin + " and " + destination + " !");
             return;
         }
 
-        for (Path path : responce.getPaths().getValue().getPath()) {
+        for (Path path : response.getPaths().getValue().getPath()) {
             if (path.getType() == PathType.BIKE_PATH)
                 System.out.println("\n🚩🚴 Bike path details:");
             else
@@ -57,11 +57,11 @@ public class PolyBikingApplication {
             }
         }
 
-        System.out.println("\n✅ Trip from " + origin + " to " + destination + " for " + convertMetersToKilometers(responce.getTotalDistance()) + " in " + convertSecondsToHours(responce.getTotalDuration()) + " !");
+        System.out.println("\n✅ Trip from " + origin + " to " + destination + " for " + convertMetersToKilometers(response.getTotalDistance()) + " in " + convertSecondsToHours(response.getTotalDuration()) + " !");
 
         // Display the details of the trip
         System.out.println("\n📃 Details of the trip:");
-        for (Path path : responce.getPaths().getValue().getPath()) {
+        for (Path path : response.getPaths().getValue().getPath()) {
             if (path.getType() == PathType.BIKE_PATH)
                 System.out.println("\t► 🚴 Bike path for " + convertMetersToKilometers(path.getDistance()) + " in " + convertSecondsToHours(path.getDuration()));
             else

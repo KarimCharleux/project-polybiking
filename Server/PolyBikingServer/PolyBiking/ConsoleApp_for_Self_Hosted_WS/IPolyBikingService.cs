@@ -7,6 +7,6 @@ namespace PolyBiking
     public interface IPolyBikingService
     {
         [OperationContract]
-        Task<BikingResponce> ComputeTrip(string addressOrigin, string addressDestination);
+        Task<BikingResponse> ComputeTrip(string addressOrigin, string addressDestination);
     }
 }
