@@ -13,12 +13,6 @@ namespace PolyBiking
     {
         static void Main(string[] args)
         {
-
-//            PolyBikingService service = new PolyBikingService();
- //           Path[] paths = service.ComputeTrip("Nice", "2255 route des dolines").Result;
-   //         Console.WriteLine(JsonConvert.SerializeObject(paths));
-
-
             // Create a URI to serve as the base address
             // Be careful to run Visual Studio as Admistrator or to allow VS to open new port netsh command. 
             // Example : netsh http add urlacl url=http://+:3000/MyService/PolyBikingService user=DOMAIN\user
@@ -44,7 +38,7 @@ namespace PolyBiking
                 // Démarrer le service
                 host.Open();
 
-                Console.WriteLine("Service is hosted at " + DateTime.Now.ToString());
+                Console.WriteLine("Service is hosted at " + DateTime.Now.ToString() + " to " + httpUrl);
                 Console.WriteLine("Routing Server is running... Press <Enter> key to stop");
                 Console.ReadLine();
 

@@ -13,30 +13,33 @@ namespace PolyBiking
     class PolyBikingService : IPolyBikingService
     {
         static readonly HttpClient client = new HttpClient();
-        async public Task<Path[]> ComputeTrip(string addressOrigin, string addressDestination)
+
+        // Main function of the service, compute the best path between two addresses
+        async public Task<BikingResponce> ComputeTrip(string addressOrigin, string addressDestination)
         {
+            BikingResponce responce = new BikingResponce();
             Position origin = await getPositionFromAddress(addressOrigin);
             Position destination = await getPositionFromAddress(addressDestination);
 
             StationInfo[] stations = await GetClosestStation(origin, destination);
+            List<Path> allPaths = new List<Path>();
 
-            Path firstFootPath = await GetPath(origin, stations[0].Position);
-            firstFootPath.type = "footPath";
+            // Get the foot and bike path between, the first option is to take a bike
+            Path firstFootPath = await GetPath(origin, stations[0].Position, PathType.footPath);
+            Path bikePath = await GetPath(stations[0].Position, stations[1].Position, PathType.bikePath);
+            Path secondFootPath = await GetPath(stations[1].Position, destination, PathType.footPath);
 
-            Path bikePath = await GetPath(stations[0].Position, stations[1].Position);
-            bikePath.type = "bikePath";
+            // Check if full foot path is a better option than bike 
+            Path fullFootPath = await GetPath(origin, destination, PathType.footPath);
 
-            Path secondFootPath = await GetPath(stations[1].Position, destination);
-            secondFootPath.type = "footPath";
+            // Compare and select the best path
+            List<Path> selectedPaths = SelectBestPath(firstFootPath, bikePath, secondFootPath, fullFootPath);
 
-            return new Path[] { firstFootPath, bikePath, secondFootPath };
+            // Create the responce object
+            return CreateBikingResponse(selectedPaths);
         }
 
-        private Task<Path> GetPath(Position origin, double[] doubles)
-        {
-            throw new NotImplementedException();
-        }
-
+        // Method to get the position from an string address 
         async private Task<Position> getPositionFromAddress(string address)
         {
             string url = "https://api.openrouteservice.org/geocode/autocomplete?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&text=" + address + "&boundary.country=FR&layers=locality,address";
@@ -59,6 +62,7 @@ namespace PolyBiking
             return positionResult;
         }
 
+        // Method to get the closest station from two positions
         async private Task<StationInfo[]> GetClosestStation(Position origin, Position destination)
         {
             StationInfo departingStation = null;
@@ -107,29 +111,63 @@ namespace PolyBiking
             return funcResponse;
         }
 
+        // Method to calculate the distance between two positions
         static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
             return Math.Sqrt(Math.Pow(lat2 - lat1, 2) + Math.Pow(lon2 - lon1, 2));
         }
 
-        async private Task<Path> GetPath(Position start, Position end)
+        // Method to get the (Foot or Cycle) path between two positions
+        async private Task<Path> GetPath(Position start, Position end, PathType pathType)
         {
-            string url = $"https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&start={start.Lng},{start.Lat}&end={end.Lng},{end.Lat}";
+            string url = $"https://api.openrouteservice.org/v2/directions/{pathType.GetString()}?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&start={start.Lng},{start.Lat}&end={end.Lng},{end.Lat}";
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
             JObject responseJson = JObject.Parse(responseBody);
 
+            if (responseJson["features"].Count() == 0)
+            {
+                return null;
+            }
             string geometryCoords = responseJson["features"][0]["geometry"]["coordinates"].ToString();
-            //Console.WriteLine(geometryCoords);
             List<List<double>> coordinatesList = JsonConvert.DeserializeObject<List<List<double>>>(geometryCoords);
             List<Position> positions = coordinatesList.Select(coord => new Position(coord[1], coord[0])).ToList();
-            //Console.WriteLine(positions[0].Lat);
             Path myPath = new Path(positions);
-            //Console.WriteLine(myPath.coordinates[0].Lng);
-
+            myPath.distance = responseJson["features"][0]["properties"]["summary"]["distance"].Value<double>();
+            myPath.duration = responseJson["features"][0]["properties"]["summary"]["duration"].Value<double>();
+            string json = responseJson["features"][0]["properties"]["segments"][0]["steps"].ToString();
+            myPath.steps = JsonConvert.DeserializeObject<List<Step>>(json);
+            myPath.type = pathType;
             return myPath;
+        }
+
+        // Method to select the best path between the different options
+        private List<Path> SelectBestPath(Path firstFootPath, Path bikePath, Path secondFootPath, Path fullFootPath)
+        {
+            var allPaths = new List<Path> { firstFootPath, bikePath, secondFootPath };
+            double combinedDuration = allPaths.Sum(p => p?.duration ?? 0);
+
+            if (fullFootPath != null && fullFootPath.duration < combinedDuration)
+            {
+                return new List<Path> { fullFootPath };
+            }
+            else
+            {
+                return allPaths.Where(p => p != null).ToList();
+            }
+        }
+
+        // Method to create the responce object
+        private BikingResponce CreateBikingResponse(List<Path> paths)
+        {
+            return new BikingResponce
+            {
+                Paths = paths,
+                TotalDistance = paths.Sum(p => p.distance),
+                TotalDuration = paths.Sum(p => p.duration)
+            };
         }
     }
 
@@ -191,18 +229,78 @@ namespace PolyBiking
         }
     }
 
+    public class Step
+    {
+        [JsonProperty("instruction")]
+        public string Instruction { get; set; }
+
+        [JsonProperty("distance")]
+        public double Distance { get; set; }
+
+        [JsonProperty("duration")]
+        public double Duration { get; set; }
+
+        [JsonProperty("type")]
+        public int Type { get; set; } 
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("way_points")]
+        public List<int> WayPoints { get; set; }
+    }
+
+    public class BikingResponce
+    {
+        public List<Path> Paths;
+        public List<Step> steps;
+        public double TotalDistance;
+        public double TotalDuration;
+    }
+
     [DataContract]
     public class Path
     {
         [DataMember]
-        public string type;
+        public PathType type;
 
         [DataMember]
         public List<Position> coordinates;
 
+        [DataMember]
+        public double distance;
+
+        [DataMember]
+        public double duration;
+
+        [DataMember]
+        public List<Step> steps;
+
         public Path(List<Position> coordinates)
         {
             this.coordinates = coordinates;
+        }
+    }
+
+    public enum PathType
+    {
+        footPath,
+        bikePath
+    }
+
+    public static class PathTypeExtensions
+    {
+        public static string GetString(this PathType pathType)
+        {
+            switch (pathType)
+            {
+                case PathType.footPath:
+                    return "foot-walking";
+                case PathType.bikePath:
+                    return "cycling-regular";
+                default:
+                    return "foot-walking";
+            }
         }
     }
 }

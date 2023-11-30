@@ -5,6 +5,7 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
 
 
@@ -19,7 +20,10 @@ import jakarta.xml.bind.annotation.XmlType;
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <sequence>
  *         <element name="coordinates" type="{http://schemas.datacontract.org/2004/07/PolyBiking}ArrayOfPosition" minOccurs="0"/>
- *         <element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         <element name="distance" type="{http://www.w3.org/2001/XMLSchema}double" minOccurs="0"/>
+ *         <element name="duration" type="{http://www.w3.org/2001/XMLSchema}double" minOccurs="0"/>
+ *         <element name="steps" type="{http://schemas.datacontract.org/2004/07/PolyBiking}ArrayOfStep" minOccurs="0"/>
+ *         <element name="type" type="{http://schemas.datacontract.org/2004/07/PolyBiking}PathType" minOccurs="0"/>
  *       </sequence>
  *     </restriction>
  *   </complexContent>
@@ -31,14 +35,21 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Path", propOrder = {
     "coordinates",
+    "distance",
+    "duration",
+    "steps",
     "type"
 })
 public class Path {
 
     @XmlElementRef(name = "coordinates", namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", type = JAXBElement.class, required = false)
     protected JAXBElement<ArrayOfPosition> coordinates;
-    @XmlElementRef(name = "type", namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", type = JAXBElement.class, required = false)
-    protected JAXBElement<String> type;
+    protected Double distance;
+    protected Double duration;
+    @XmlElementRef(name = "steps", namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", type = JAXBElement.class, required = false)
+    protected JAXBElement<ArrayOfStep> steps;
+    @XmlSchemaType(name = "string")
+    protected PathType type;
 
     /**
      * Gets the value of the coordinates property.
@@ -65,14 +76,86 @@ public class Path {
     }
 
     /**
+     * Gets the value of the distance property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
+     */
+    public Double getDistance() {
+        return distance;
+    }
+
+    /**
+     * Sets the value of the distance property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
+     */
+    public void setDistance(Double value) {
+        this.distance = value;
+    }
+
+    /**
+     * Gets the value of the duration property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
+     */
+    public Double getDuration() {
+        return duration;
+    }
+
+    /**
+     * Sets the value of the duration property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
+     */
+    public void setDuration(Double value) {
+        this.duration = value;
+    }
+
+    /**
+     * Gets the value of the steps property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link JAXBElement }{@code <}{@link ArrayOfStep }{@code >}
+     *     
+     */
+    public JAXBElement<ArrayOfStep> getSteps() {
+        return steps;
+    }
+
+    /**
+     * Sets the value of the steps property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link ArrayOfStep }{@code >}
+     *     
+     */
+    public void setSteps(JAXBElement<ArrayOfStep> value) {
+        this.steps = value;
+    }
+
+    /**
      * Gets the value of the type property.
      * 
      * @return
      *     possible object is
-     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     {@link PathType }
      *     
      */
-    public JAXBElement<String> getType() {
+    public PathType getType() {
         return type;
     }
 
@@ -81,10 +164,10 @@ public class Path {
      * 
      * @param value
      *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     {@link PathType }
      *     
      */
-    public void setType(JAXBElement<String> value) {
+    public void setType(PathType value) {
         this.type = value;
     }
 
