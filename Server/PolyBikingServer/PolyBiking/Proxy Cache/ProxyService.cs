@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 
-namespace Proxy_Cache
+namespace Proxy_Cache_Server
 {
     internal class ProxyService : IProxyService
     {

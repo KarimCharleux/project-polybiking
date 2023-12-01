@@ -6,7 +6,7 @@ using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Proxy_Cache
+namespace Proxy_Cache_Server
 {
     internal class Program
     {

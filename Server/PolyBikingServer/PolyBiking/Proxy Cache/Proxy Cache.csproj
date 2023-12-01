@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C8A2B804-7F46-45CE-B6D7-9BD269581719}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Proxy_Cache</RootNamespace>
+    <RootNamespace>Proxy_Cache_Server</RootNamespace>
     <AssemblyName>Proxy Cache</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

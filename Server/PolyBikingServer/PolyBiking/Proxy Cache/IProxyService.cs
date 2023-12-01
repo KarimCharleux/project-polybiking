@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 // add assembly System.ServiceModel  and using for the corresponding model
 using System.ServiceModel;
 
-namespace Proxy_Cache
+namespace Proxy_Cache_Server
 {
 
     [ServiceContract()]

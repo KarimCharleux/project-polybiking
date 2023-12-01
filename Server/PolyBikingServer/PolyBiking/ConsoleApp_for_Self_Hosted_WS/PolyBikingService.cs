@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
-
+using PolyBiking.Proxy;
 
 namespace PolyBiking
 {
     class PolyBikingService : IPolyBikingService
     {
         static readonly HttpClient client = new HttpClient();
+        ProxyServiceClient proxyServiceClient = new ProxyServiceClient();
         async public Task<Path[]> ComputeTrip(string addressOrigin, string addressDestination)
         {
             Position origin = await getPositionFromAddress(addressOrigin);
@@ -39,10 +40,13 @@ namespace PolyBiking
 
         async private Task<Position> getPositionFromAddress(string address)
         {
+            /*
             string url = "https://api.openrouteservice.org/geocode/autocomplete?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&text=" + address + "&boundary.country=FR&layers=locality,address";
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
+            */
+            string responseBody = proxyServiceClient.GetAddressInfo(address);
             JObject responseJson = JObject.Parse(responseBody);
 
             Position positionResult = new Position();
@@ -63,10 +67,13 @@ namespace PolyBiking
         {
             StationInfo departingStation = null;
             StationInfo arrivalStation = null;
+            /*
             string url = "https://api.jcdecaux.com/vls/v1/stations?apiKey=105a67e972bd8e364d7f4da5301dbaf4f314db90";
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
+            */
+            string responseBody = proxyServiceClient.GetStationInfo();
             List<StationInfo> stations;
 
             try
@@ -114,10 +121,21 @@ namespace PolyBiking
 
         async private Task<Path> GetPath(Position start, Position end)
         {
+            /*
             string url = $"https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&start={start.Lng},{start.Lat}&end={end.Lng},{end.Lat}";
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
+            */
+            PolyBiking.Proxy.Position startpos = new Proxy.Position();
+            startpos.Lng = start.Lng;
+            startpos.Lat = start.Lat;
+
+            PolyBiking.Proxy.Position endpos = new Proxy.Position();
+            endpos.Lng = end.Lng;
+            endpos.Lat = end.Lat;
+
+            string responseBody = proxyServiceClient.GetRouteInfo(startpos, endpos);
 
             JObject responseJson = JObject.Parse(responseBody);
 
