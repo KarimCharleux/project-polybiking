@@ -3,13 +3,10 @@ using System.ServiceModel;
 
 namespace PolyBiking
 {
-
     [ServiceContract]
     public interface IPolyBikingService
     {
         [OperationContract]
-        Task<Path[]> ComputeTrip(string addressOrigin, string addressDestination);
+        Task<BikingResponse> ComputeTrip(string addressOrigin, string addressDestination);
     }
-
-
 }

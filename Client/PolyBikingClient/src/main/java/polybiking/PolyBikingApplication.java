@@ -1,12 +1,8 @@
 package polybiking;
 
-import com.soap.ws.client.generated.ArrayOfPath;
-import com.soap.ws.client.generated.IPolyBikingService;
-import com.soap.ws.client.generated.PolyBikingService;
-import org.jxmapviewer.viewer.GeoPosition;
+import com.soap.ws.client.generated.*;
 import polybiking.map.MapView;
 
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -14,36 +10,75 @@ import java.util.Scanner;
  */
 public class PolyBikingApplication {
     private final IPolyBikingService polyBikingService;
-    private final CitiesList citiesList;
     private final Scanner scanner;
 
     public PolyBikingApplication() {
-        this.citiesList = CitiesList.getInstance();
         this.scanner = new Scanner(System.in);
         PolyBikingService bikingService = new PolyBikingService();
         this.polyBikingService = bikingService.getBasicHttpBindingIPolyBikingService();
 
-        System.out.println("▷ PolyBiking Application ◁\n");
+        System.out.println("▷ PolyBiking Application ◁");
     }
 
     /**
      * Run the application and display the map
      */
     public void run() {
-        System.out.println("► List of cities: ");
-        for (Map.Entry<String, GeoPosition> entry : this.citiesList.entrySet()) {
-            System.out.println("\t🏡 " + entry.getKey());
-        }
-
         String origin = askForEnter("origin");
         String destination = askForEnter("destination");
 
-        ArrayOfPath paths = polyBikingService.computeTrip(origin, destination);
+        System.out.println("\n⏳ Computing trip ...\n");
 
-        MapView mapView = new MapView(paths);
+        // Make the request to the server and get the response
+        BikingResponse response;
+        try {
+            response = polyBikingService.computeTrip(origin, destination);
+        } catch (Exception e) {
+            System.out.println("❌ Error: " + e.getMessage());
+            return;
+        }
 
-        System.out.println("\n✅ Trip from " + origin + " to " + destination + " for " + mapView.calculateTripTime() + " !");
+        // Display the map with the paths
+        MapView map = new MapView(response.getPaths().getValue());
+        map.display();
+
+        if (response.getPaths().getValue().getPath() == null || response.getPaths().getValue().getPath().isEmpty()) {
+            System.out.println("\n❌ No path found between " + origin + " and " + destination + " !");
+            return;
+        }
+
+        for (Path path : response.getPaths().getValue().getPath()) {
+            if (path.getType() == PathType.BIKE_PATH)
+                System.out.println("\n🚩🚴 Bike path details:");
+            else
+                System.out.println("\n🚩🚶 Foot path details:");
+            for (Step step : path.getSteps().getValue().getStep()) {
+                System.out.println("\t► At " + convertMetersToKilometers(step.getDistance()) + ": " + step.getInstruction().getValue());
+            }
+        }
+
+        System.out.println("\n✅ Trip from " + origin + " to " + destination + " for " + convertMetersToKilometers(response.getTotalDistance()) + " in " + convertSecondsToHours(response.getTotalDuration()) + " !");
+
+        // Display the details of the trip
+        System.out.println("\n📃 Details of the trip:");
+        for (Path path : response.getPaths().getValue().getPath()) {
+            if (path.getType() == PathType.BIKE_PATH)
+                System.out.println("\t► 🚴 Bike path for " + convertMetersToKilometers(path.getDistance()) + " in " + convertSecondsToHours(path.getDuration()));
+            else
+                System.out.println("\t► 🚶 Foot path for " + convertMetersToKilometers(path.getDistance()) + " in " + convertSecondsToHours(path.getDuration()));
+        }
     }
+
+    private String convertSecondsToHours(Double seconds) {
+        double hours = seconds / 3600;
+        double minutes = (seconds % 3600) / 60;
+        return String.format("%.0f", hours) + "h" + String.format("%.0f", minutes) + "min";
+    }
+
+    private String convertMetersToKilometers(Double meters) {
+        return String.format("%.2f", meters / 1000) + "km";
+    }
+
 
     /**
      * Ask for a city name and check if it exists in the list
@@ -53,6 +88,13 @@ public class PolyBikingApplication {
      */
     private String askForEnter(String useFor) {
         System.out.println("\n● Enter " + useFor + ": ");
-        return scanner.nextLine();
+        String result = "";
+        while (result.isEmpty()) {
+            result = this.scanner.nextLine();
+            if (result.isEmpty()) {
+                System.out.println("❌ Please enter a " + useFor + "!");
+            }
+        }
+        return result;
     }
 }

@@ -19,7 +19,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <sequence>
- *         <element name="ComputeTripResult" type="{http://schemas.datacontract.org/2004/07/PolyBiking}ArrayOfPath" minOccurs="0"/>
+ *         <element name="ComputeTripResult" type="{http://schemas.datacontract.org/2004/07/PolyBiking}BikingResponse" minOccurs="0"/>
  *       </sequence>
  *     </restriction>
  *   </complexContent>
@@ -36,17 +36,17 @@ import jakarta.xml.bind.annotation.XmlType;
 public class ComputeTripResponse {
 
     @XmlElementRef(name = "ComputeTripResult", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
-    protected JAXBElement<ArrayOfPath> computeTripResult;
+    protected JAXBElement<BikingResponse> computeTripResult;
 
     /**
      * Gets the value of the computeTripResult property.
      * 
      * @return
      *     possible object is
-     *     {@link JAXBElement }{@code <}{@link ArrayOfPath }{@code >}
+     *     {@link JAXBElement }{@code <}{@link BikingResponse }{@code >}
      *     
      */
-    public JAXBElement<ArrayOfPath> getComputeTripResult() {
+    public JAXBElement<BikingResponse> getComputeTripResult() {
         return computeTripResult;
     }
 
@@ -55,10 +55,10 @@ public class ComputeTripResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link ArrayOfPath }{@code >}
+     *     {@link JAXBElement }{@code <}{@link BikingResponse }{@code >}
      *     
      */
-    public void setComputeTripResult(JAXBElement<ArrayOfPath> value) {
+    public void setComputeTripResult(JAXBElement<BikingResponse> value) {
         this.computeTripResult = value;
     }
 
