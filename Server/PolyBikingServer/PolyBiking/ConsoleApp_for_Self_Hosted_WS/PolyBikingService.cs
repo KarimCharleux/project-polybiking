@@ -13,15 +13,23 @@ namespace PolyBiking
     class PolyBikingService : IPolyBikingService
     {
         static readonly HttpClient client = new HttpClient();
+        ProxyServiceClient proxyServiceClient = new ProxyServiceClient();
 
         // Main function of the service, compute the best path between two addresses
         async public Task<BikingResponse> ComputeTrip(string addressOrigin, string addressDestination)
-        ProxyServiceClient proxyServiceClient = new ProxyServiceClient();
-        async public Task<Path[]> ComputeTrip(string addressOrigin, string addressDestination)
         {
             BikingResponse responce = new BikingResponse();
             Position origin = await getPositionFromAddress(addressOrigin);
             Position destination = await getPositionFromAddress(addressDestination);
+            /*
+            Position origin = new Position();
+            origin.Lng = 4.8505011;
+            origin.Lat = 45.7600491;
+
+            Position destination = new Position();
+            destination.Lng = 4.8705011;
+            destination.Lat = 45.7603491;
+            */
 
             StationInfo[] stations = await GetClosestStation(origin, destination);
             List<Path> allPaths = new List<Path>();
@@ -51,17 +59,20 @@ namespace PolyBiking
             string responseBody = await response.Content.ReadAsStringAsync();
             */
             string responseBody = proxyServiceClient.GetAddressInfo(address);
-            JObject responseJson = JObject.Parse(responseBody);
+            Console.WriteLine("l7ma9");
+            //JObject responseJson = JObject.Parse(responseBody);
+            Console.WriteLine("mal7ma9ch");
+            double[] coords = JsonConvert.DeserializeObject<double[]>(responseBody);
 
             Position positionResult = new Position();
-            if (responseJson["features"].Count() > 0)
+            if (responseBody != null)
             {
-                positionResult.Lat = responseJson["features"][0]["geometry"]["coordinates"][1].Value<double>();
-                positionResult.Lng = responseJson["features"][0]["geometry"]["coordinates"][0].Value<double>();
+                positionResult.Lat = coords[1];
+                positionResult.Lng = coords[0];
             }
             else
             {
-                throw new Exception("No position found for this address" + address);
+                throw new Exception("No position found for this address " + address);
             }
 
             return positionResult;

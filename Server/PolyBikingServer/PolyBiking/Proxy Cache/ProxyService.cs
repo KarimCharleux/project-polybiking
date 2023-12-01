@@ -27,9 +27,19 @@ namespace Proxy_Cache_Server
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
-            CacheItem value = new CacheItem(address, responseBody);
+            JObject responseJson = JObject.Parse(responseBody);
+            string newResponseBody;
+            if (responseJson["features"].Count() > 0)
+                {
+                newResponseBody = responseJson["features"][0]["geometry"]["coordinates"].ToString();
+                }
+                else
+                {
+                    newResponseBody = responseBody;
+                }
+            CacheItem value = new CacheItem(address, newResponseBody);
             addressCache.Add(value, policy);
-            return responseBody;
+            return newResponseBody;
             }
             return cachedAddress;
         }
@@ -60,9 +70,21 @@ namespace Proxy_Cache_Server
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync(); 
-                CacheItem value = new CacheItem("elstazion", responseBody);
+                string newResponseBody;
+            List<StationInfo> stations;
+            try
+            {
+                stations = JsonConvert.DeserializeObject<List<StationInfo>>(responseBody);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message); return null;
+            }
+            stations = stations.Where(s => s.AvailableBikes > 0).ToList();
+                newResponseBody = JsonConvert.SerializeObject(stations);
+                CacheItem value = new CacheItem("elstazion", newResponseBody);
                 routeCache.Add(value, policy);
-                return responseBody;
+                return newResponseBody;
             }
             return cachedInfo;
         }
@@ -85,4 +107,43 @@ namespace Proxy_Cache_Server
         {
         }
     }
+    public class StationInfo
+    {
+        [JsonProperty("number")]
+        public int Number { get; set; }
+
+        [JsonProperty("contract_name")]
+        public string ContractName { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("address")]
+        public string Address { get; set; }
+
+        [JsonProperty("position")]
+        public Position Position { get; set; }
+
+        [JsonProperty("banking")]
+        public bool Banking { get; set; }
+
+        [JsonProperty("bonus")]
+        public bool Bonus { get; set; }
+
+        [JsonProperty("bike_stands")]
+        public int BikeStands { get; set; }
+
+        [JsonProperty("available_bike_stands")]
+        public int AvailableBikeStands { get; set; }
+
+        [JsonProperty("available_bikes")]
+        public int AvailableBikes { get; set; }
+
+        [JsonProperty("status")]
+        public string Status { get; set; }
+
+        [JsonProperty("last_update")]
+        public long? LastUpdate { get; set; }
+    }
+
 }
