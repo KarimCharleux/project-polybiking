@@ -29,6 +29,9 @@ public class PolyBikingApplication {
 
         System.out.println("\n⏳ Computing trip ...\n");
 
+        // Start the timer
+        long startTime = System.currentTimeMillis();
+
         // Make the request to the server and get the response
         BikingResponse response;
         try {
@@ -37,6 +40,9 @@ public class PolyBikingApplication {
             System.out.println("❌ Error: " + e.getMessage());
             return;
         }
+
+        // Stop the timer
+        long stopTime = System.currentTimeMillis();
 
         // Display the map with the paths
         MapView map = new MapView(response.getPaths().getValue());
@@ -57,7 +63,9 @@ public class PolyBikingApplication {
             }
         }
 
-        System.out.println("\n✅ Trip from " + origin + " to " + destination + " for " + convertMetersToKilometers(response.getTotalDistance()) + " in " + convertSecondsToHours(response.getTotalDuration()) + " !");
+        // Display the total time of the trip
+        System.out.println("\n⏱️ Trip found in " + (stopTime - startTime) + "ms !");
+        System.out.println("✅ Trip from " + origin + " to " + destination + " for " + convertMetersToKilometers(response.getTotalDistance()) + " in " + convertSecondsToHours(response.getTotalDuration()) + " !");
 
         // Display the details of the trip
         System.out.println("\n📃 Details of the trip:");

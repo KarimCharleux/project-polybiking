@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Proxy_Cache_Server
 {
@@ -24,8 +20,8 @@ namespace Proxy_Cache_Server
             
             host.Open();
 
-            Console.WriteLine("Service is host at " + DateTime.Now.ToString());
-            Console.WriteLine("Host is running... Press <Enter> key to stop");
+            Console.WriteLine("Service Proxy is hosted at " + DateTime.Now.ToString() + " to " + httpUrl);
+            Console.WriteLine("Host is running... Press <Enter> key to stop\n");
             Console.ReadLine();
         }
     }

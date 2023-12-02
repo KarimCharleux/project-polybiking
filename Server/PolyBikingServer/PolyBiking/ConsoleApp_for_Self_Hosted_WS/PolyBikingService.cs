@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,35 +11,24 @@ namespace PolyBiking
 {
     class PolyBikingService : IPolyBikingService
     {
-        static readonly HttpClient client = new HttpClient();
         ProxyServiceClient proxyServiceClient = new ProxyServiceClient();
 
         // Main function of the service, compute the best path between two addresses
         async public Task<BikingResponse> ComputeTrip(string addressOrigin, string addressDestination)
         {
-            BikingResponse responce = new BikingResponse();
-            Position origin = await getPositionFromAddress(addressOrigin);
-            Position destination = await getPositionFromAddress(addressDestination);
-            /*
-            Position origin = new Position();
-            origin.Lng = 4.8505011;
-            origin.Lat = 45.7600491;
+            Position origin = getPositionFromAddress(addressOrigin);
+            Position destination = getPositionFromAddress(addressDestination);
 
-            Position destination = new Position();
-            destination.Lng = 4.8705011;
-            destination.Lat = 45.7603491;
-            */
-
-            StationInfo[] stations = await GetClosestStation(origin, destination);
+            StationInfo[] stations = GetClosestStation(origin, destination);
             List<Path> allPaths = new List<Path>();
 
             // Get the foot and bike path between, the first option is to take a bike
-            Path firstFootPath = await GetPath(origin, stations[0].Position, PathType.footPath);
-            Path bikePath = await GetPath(stations[0].Position, stations[1].Position, PathType.bikePath);
-            Path secondFootPath = await GetPath(stations[1].Position, destination, PathType.footPath);
+            Path firstFootPath = GetPath(origin, stations[0].Position, PathType.footPath);
+            Path bikePath = GetPath(stations[0].Position, stations[1].Position, PathType.bikePath);
+            Path secondFootPath = GetPath(stations[1].Position, destination, PathType.footPath);
 
             // Check if full foot path is a better option than bike 
-            Path fullFootPath = await GetPath(origin, destination, PathType.footPath);
+            Path fullFootPath = GetPath(origin, destination, PathType.footPath);
 
             // Compare and select the best path
             List<Path> selectedPaths = SelectBestPath(firstFootPath, bikePath, secondFootPath, fullFootPath);
@@ -50,18 +38,9 @@ namespace PolyBiking
         }
 
         // Method to get the position from an string address 
-        async private Task<Position> getPositionFromAddress(string address)
+        private Position getPositionFromAddress(string address)
         {
-            /*
-            string url = "https://api.openrouteservice.org/geocode/autocomplete?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&text=" + address + "&boundary.country=FR&layers=locality,address";
-            HttpResponseMessage response = await client.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-            */
             string responseBody = proxyServiceClient.GetAddressInfo(address);
-            Console.WriteLine("l7ma9");
-            //JObject responseJson = JObject.Parse(responseBody);
-            Console.WriteLine("mal7ma9ch");
             double[] coords = JsonConvert.DeserializeObject<double[]>(responseBody);
 
             Position positionResult = new Position();
@@ -79,19 +58,12 @@ namespace PolyBiking
         }
 
         // Method to get the closest station from two positions
-        async private Task<StationInfo[]> GetClosestStation(Position origin, Position destination)
+        private StationInfo[] GetClosestStation(Position origin, Position destination)
         {
             StationInfo departingStation = null;
             StationInfo arrivalStation = null;
-            /*
-            string url = "https://api.jcdecaux.com/vls/v1/stations?apiKey=105a67e972bd8e364d7f4da5301dbaf4f314db90";
-            HttpResponseMessage response = await client.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-            */
             string responseBody = proxyServiceClient.GetStationInfo();
             List<StationInfo> stations;
-
             try
             {
                 stations = JsonConvert.DeserializeObject<List<StationInfo>>(responseBody);
@@ -100,7 +72,6 @@ namespace PolyBiking
             {
                 Console.WriteLine(e.Message); return null;
             }
-
             stations = stations.Where(s => s.AvailableBikes > 0).ToList();
 
             double minDistance = double.MaxValue;
@@ -137,23 +108,9 @@ namespace PolyBiking
         }
 
         // Method to get the (Foot or Cycle) path between two positions
-        async private Task<Path> GetPath(Position start, Position end, PathType pathType)
+        private Path GetPath(Position start, Position end, PathType pathType)
         {
-            /*
-            string url = $"https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&start={start.Lng},{start.Lat}&end={end.Lng},{end.Lat}";
-            HttpResponseMessage response = await client.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-            */
-            PolyBiking.Proxy.Position startpos = new Proxy.Position();
-            startpos.Lng = start.Lng;
-            startpos.Lat = start.Lat;
-
-            PolyBiking.Proxy.Position endpos = new Proxy.Position();
-            endpos.Lng = end.Lng;
-            endpos.Lat = end.Lat;
-
-            string responseBody = proxyServiceClient.GetRouteInfo(startpos, endpos);
+            string responseBody = proxyServiceClient.GetRouteInfo(start.Lat, start.Lng, end.Lat, end.Lng, pathType.GetString());
 
             JObject responseJson = JObject.Parse(responseBody);
 
@@ -274,7 +231,7 @@ namespace PolyBiking
         public double Duration { get; set; }
 
         [JsonProperty("type")]
-        public int Type { get; set; } 
+        public int Type { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }

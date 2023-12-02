@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="50d327e5-a1d6-43a1-b06c-3ad22a4c8807" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="75da215b-bf4a-4237-8de2-28563ddc3d1c" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -19,10 +19,12 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:3001/MyService/ProxyService?singleWsdl" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost:3001/MyService/ProxyService?wsdl" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ProxyService.wsdl" MetadataType="Wsdl" ID="ff39adc8-5d8c-4513-a161-ff7d1e962cdc" SourceId="1" SourceUrl="http://localhost:3001/MyService/ProxyService?singleWsdl" />
+    <MetadataFile FileName="ProxyService.wsdl" MetadataType="Wsdl" ID="0f00055e-87e4-4b1f-b570-1f0c5219fd11" SourceId="1" SourceUrl="http://localhost:3001/MyService/ProxyService?wsdl" />
+    <MetadataFile FileName="ProxyService.xsd" MetadataType="Schema" ID="f1eb75fe-3668-4dad-bb61-b127feb623e1" SourceId="1" SourceUrl="http://localhost:3001/MyService/ProxyService?xsd=xsd1" />
+    <MetadataFile FileName="ProxyService1.xsd" MetadataType="Schema" ID="3acd6d3f-eb8b-4e6c-b5b1-68aa85f658fd" SourceId="1" SourceUrl="http://localhost:3001/MyService/ProxyService?xsd=xsd0" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

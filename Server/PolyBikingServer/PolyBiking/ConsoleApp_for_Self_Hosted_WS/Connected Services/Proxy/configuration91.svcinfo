@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="9.1" CheckSum="1s2tm6hdP7WILQbtu3z7OtybUE/BdNuiSbmOvZEQRLo=">
+<SavedWcfConfigurationInformation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="9.1" CheckSum="sh7mUYhuTwf5fmYyF+zC9N5RxtxsM/8sHKRpEN7UH5k=">
   <bindingConfigurations>
-    <bindingConfiguration bindingType="wsHttpBinding" name="WSHttpBinding_IProxyService12">
+    <bindingConfiguration bindingType="wsHttpBinding" name="WSHttpBinding_IProxyService">
       <properties>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>WSHttpBinding_IProxyService12</serializedValue>
+          <serializedValue>WSHttpBinding_IProxyService</serializedValue>
         </property>
         <property path="/closeTimeout" isComplexType="false" isExplicitlyDefined="true" clrType="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -127,7 +127,7 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="WSHttpBinding_IProxyService12" contract="Proxy.IProxyService" bindingType="wsHttpBinding" address="http://localhost:3001/MyService/ProxyService" bindingConfiguration="WSHttpBinding_IProxyService12">
+    <endpoint name="WSHttpBinding_IProxyService" contract="Proxy.IProxyService" bindingType="wsHttpBinding" address="http://localhost:3001/MyService/ProxyService" bindingConfiguration="WSHttpBinding_IProxyService">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>http://localhost:3001/MyService/ProxyService</serializedValue>
@@ -139,7 +139,7 @@
           <serializedValue>wsHttpBinding</serializedValue>
         </property>
         <property path="/bindingConfiguration" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>WSHttpBinding_IProxyService12</serializedValue>
+          <serializedValue>WSHttpBinding_IProxyService</serializedValue>
         </property>
         <property path="/contract" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>Proxy.IProxyService</serializedValue>
@@ -157,7 +157,7 @@
           <serializedValue>System.ServiceModel.Configuration.UserPrincipalNameElement</serializedValue>
         </property>
         <property path="/identity/userPrincipalName/value" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>DESKTOP-VI06GSG\dbana</serializedValue>
+          <serializedValue>OMEN-KARIM\Admin</serializedValue>
         </property>
         <property path="/identity/servicePrincipalName" isComplexType="true" isExplicitlyDefined="false" clrType="System.ServiceModel.Configuration.ServicePrincipalNameElement, System.ServiceModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>System.ServiceModel.Configuration.ServicePrincipalNameElement</serializedValue>
@@ -202,7 +202,7 @@
           <serializedValue>False</serializedValue>
         </property>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>WSHttpBinding_IProxyService12</serializedValue>
+          <serializedValue>WSHttpBinding_IProxyService</serializedValue>
         </property>
         <property path="/kind" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
