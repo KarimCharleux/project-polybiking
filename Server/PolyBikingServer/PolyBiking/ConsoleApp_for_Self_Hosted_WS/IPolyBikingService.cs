@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
 using System.ServiceModel;
+using PolyBiking;
 
-namespace PolyBiking
+namespace ConsoleApp_for_Self_Hosted_WS
 {
-    [ServiceContract]
+    [ServiceContract()]
     public interface IPolyBikingService
     {
-        [OperationContract]
-        Task<BikingResponse> ComputeTrip(string addressOrigin, string addressDestination);
+        [OperationContract()]
+        Task<BikingResponse> ComputeTrip(string addressOrigin, string addressDestination)
     }
 }

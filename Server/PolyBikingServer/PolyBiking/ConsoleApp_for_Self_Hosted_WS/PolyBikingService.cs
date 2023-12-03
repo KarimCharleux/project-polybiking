@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
 using PolyBiking.Proxy;
+using ConsoleApp_for_Self_Hosted_WS;
 
 namespace PolyBiking
 {
@@ -14,27 +15,150 @@ namespace PolyBiking
         ProxyServiceClient proxyServiceClient = new ProxyServiceClient();
 
         // Main function of the service, compute the best path between two addresses
-        async public Task<BikingResponse> ComputeTrip(string addressOrigin, string addressDestination)
+        public async Task<BikingResponse> ComputeTrip(string addressOrigin, string addressDestination)
         {
-            Position origin = getPositionFromAddress(addressOrigin);
-            Position destination = getPositionFromAddress(addressDestination);
+            // Start two tasks to get the position of the two addresses
+            var originTask = Task.Run(() => getPositionFromAddress(addressOrigin));
+            var destinationTask = Task.Run(() => getPositionFromAddress(addressDestination));
 
-            StationInfo[] stations = GetClosestStation(origin, destination);
+            // Wait for the two tasks to finish
+            await Task.WhenAll(originTask, destinationTask);
+
+            // Retrieve the positions
+            Position origin = originTask.Result;
+            Position destination = destinationTask.Result;
+
+            // Get all the stations in France
+            List<StationInfo> allFranceStations = JsonConvert.DeserializeObject<List<StationInfo>>(proxyServiceClient.GetStationInfo());
+            Console.WriteLine("[ComputeTrip] Call to api.jcdecaux.com/vls/v1/stations");
+
             List<Path> allPaths = new List<Path>();
+            Position currentOrigin = origin;
+            int iteration = 1;
+            while (true)
+            {
+                // Step 0 : Get the closest stations from the current origin and the destination
+                StationInfo[] stations = GetClosestStation(currentOrigin, destination, allFranceStations);
+                StationInfo originStation = stations[0];
+                StationInfo destinationStation = stations[1];
+                StationInfo nextStation = stations[2];
 
-            // Get the foot and bike path between, the first option is to take a bike
-            Path firstFootPath = GetPath(origin, stations[0].Position, PathType.footPath);
-            Path bikePath = GetPath(stations[0].Position, stations[1].Position, PathType.bikePath);
-            Path secondFootPath = GetPath(stations[1].Position, destination, PathType.footPath);
+                // Remove the stations from the list to avoid to select them again
+                allFranceStations.Remove(originStation);
+                allFranceStations.Remove(destinationStation);
+                allFranceStations.Remove(nextStation);
 
-            // Check if full foot path is a better option than bike 
+                Console.WriteLine(iteration+" - Origin station : " + originStation.Name + " - " + originStation.Position.Lat+", "+ originStation.Position.Lng);
+                Console.WriteLine(iteration+" - Destination station : " + destinationStation.Name + " - " + destinationStation.Position.Lat + ", " + destinationStation.Position.Lng);
+                if (nextStation != null)
+                {
+                    Console.WriteLine(iteration + " - Next station : " + nextStation.Name + " - " + nextStation.Position.Lat + ", " + nextStation.Position.Lng);
+                }
+
+                Console.WriteLine("[Step 0] Get the closest stations from the current origin and the destination");
+
+                // Step 1 : Foot path from current origin to closest station
+                if (currentOrigin.Lng == originStation.Position.Lng && currentOrigin.Lat == originStation.Position.Lat)
+                {
+                    Console.WriteLine("[Step 1] No foot path from current origin to closest station");
+                }
+                else
+                {
+                    Console.WriteLine("[Step 1] Foot path from current origin to closest station");
+                    allPaths.Add(GetPath(currentOrigin, originStation.Position, PathType.footPath));
+                }
+
+                // Step 2 : Bike path from closest station to closest station in the same contract
+                Path bikePath = GetPath(originStation.Position, destinationStation.Position, PathType.bikePath);
+                bikePath.departingStation = originStation;
+                bikePath.arrivalStation = destinationStation;
+                allPaths.Add(bikePath);
+                Console.WriteLine("[Step 2] Bike path from closest station to closest station in the same contract");
+
+                // Step 3 : Foot path from the station to another station or the destination
+                if (nextStation != null && (CalculateDistance(destinationStation.Position.Lat, destinationStation.Position.Lng, destination.Lat, destination.Lng) > 
+                    CalculateDistance(destinationStation.Position.Lat, destinationStation.Position.Lng, nextStation.Position.Lat, nextStation.Position.Lng)))
+                {
+                    allPaths.Add(GetPath(destinationStation.Position, nextStation.Position, PathType.footPath));
+                    Console.WriteLine("[Step 3] Foot path from the station to another station");
+                }
+                else
+                {
+                    allPaths.Add(GetPath(destinationStation.Position, destination, PathType.footPath));
+                    Console.WriteLine("[Step 3] Foot path from the station to the destination");
+                    break;
+                }
+
+                if (iteration++ > 10)
+                {
+                    break;
+                }
+
+                // Step 4 : Update the current origin and repeat until the destination is reached
+                currentOrigin = nextStation.Position;
+                Console.WriteLine("[Step 4] Update the current origin and repeat until the destination is reached");
+            }
+
+            Console.WriteLine("Path found in " + iteration + " iterations");
+
+            // Get the full foot path to check if it's a better option than bike
             Path fullFootPath = GetPath(origin, destination, PathType.footPath);
+            Console.WriteLine("[Step] Get the full foot path to check if it's a better option than bike");
 
             // Compare and select the best path
-            List<Path> selectedPaths = SelectBestPath(firstFootPath, bikePath, secondFootPath, fullFootPath);
+            List<Path> bestPath = SelectBestPath(allPaths, fullFootPath);
+            Console.WriteLine("[Final Step] Compare and select the best path");
 
             // Create the responce object
-            return CreateBikingResponse(selectedPaths);
+            return CreateBikingResponse(allPaths); // TODO : bestPath
+        }
+
+        // Method to get the closest station from two positions
+        private StationInfo[] GetClosestStation(Position origin, Position destination, List<StationInfo> allStation)
+        {
+            StationInfo departingStation = null;
+            StationInfo arrivalStation = null;
+            StationInfo nextNearStation = null;
+
+            double minDistance = double.MaxValue;
+            foreach (var station in allStation.Where(s => s.AvailableBikes > 0).ToList())
+            {
+                double distance = CalculateDistance(origin.Lat, origin.Lng, station.Position.Lat, station.Position.Lng);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    departingStation = station;
+                }
+            }
+            minDistance = double.MaxValue;
+            double arrivalDistance = double.MaxValue;
+            foreach (var station in allStation.Where(s => s.AvailableBikeStands > 0).ToList())
+            {
+                double distance = CalculateDistance(destination.Lat, destination.Lng, station.Position.Lat, station.Position.Lng);
+
+                if (station.ContractName == departingStation.ContractName && distance < minDistance && station.Number != departingStation.Number)
+                {
+                    minDistance = distance;
+                    arrivalStation = station;
+                    arrivalDistance = distance;
+                }
+            }
+            minDistance = double.MaxValue;
+            foreach (var station in allStation.Where(s => s.AvailableBikes > 0).ToList())
+            {
+                double distanceFromOrigin = CalculateDistance(origin.Lat, origin.Lng, station.Position.Lat, station.Position.Lng);
+                double distanceFromDestination = CalculateDistance(destination.Lat, destination.Lng, station.Position.Lat, station.Position.Lng);
+
+                if (station.ContractName != arrivalStation.ContractName && distanceFromDestination < minDistance && arrivalDistance > distanceFromDestination)
+                {
+                    minDistance = distanceFromDestination;
+                    nextNearStation = station;
+                }
+            }
+
+            StationInfo[] funcResponse = new StationInfo[] { departingStation, arrivalStation, nextNearStation };
+            return funcResponse;
         }
 
         // Method to get the position from an string address 
@@ -57,51 +181,7 @@ namespace PolyBiking
             return positionResult;
         }
 
-        // Method to get the closest station from two positions
-        private StationInfo[] GetClosestStation(Position origin, Position destination)
-        {
-            StationInfo departingStation = null;
-            StationInfo arrivalStation = null;
-            string responseBody = proxyServiceClient.GetStationInfo();
-            List<StationInfo> stations;
-            try
-            {
-                stations = JsonConvert.DeserializeObject<List<StationInfo>>(responseBody);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message); return null;
-            }
-            stations = stations.Where(s => s.AvailableBikes > 0).ToList();
-
-            double minDistance = double.MaxValue;
-            foreach (var station in stations)
-            {
-                double distance = CalculateDistance(origin.Lat, origin.Lng, station.Position.Lat, station.Position.Lng);
-
-                if (distance < minDistance)
-                {
-                    minDistance = distance;
-                    departingStation = station;
-                }
-            }
-            minDistance = double.MaxValue;
-            foreach (var station in stations)
-            {
-                double distance = CalculateDistance(destination.Lat, destination.Lng, station.Position.Lat, station.Position.Lng);
-
-                if (station.ContractName == departingStation.ContractName && distance < minDistance && station.Number != departingStation.Number)
-                {
-                    minDistance = distance;
-                    arrivalStation = station;
-                }
-            }
-
-            StationInfo[] funcResponse = new StationInfo[] { departingStation, arrivalStation };
-            return funcResponse;
-        }
-
-        // Method to calculate the distance between two positions
+        // Method to calculate the distance between two positions in a straight line
         static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
             return Math.Sqrt(Math.Pow(lat2 - lat1, 2) + Math.Pow(lon2 - lon1, 2));
@@ -134,9 +214,8 @@ namespace PolyBiking
         }
 
         // Method to select the best path between the different options
-        private List<Path> SelectBestPath(Path firstFootPath, Path bikePath, Path secondFootPath, Path fullFootPath)
+        private List<Path> SelectBestPath(List<Path> allPaths, Path fullFootPath)
         {
-            var allPaths = new List<Path> { firstFootPath, bikePath, secondFootPath };
             double combinedDuration = allPaths.Sum(p => p?.duration ?? 0);
 
             if (fullFootPath != null && fullFootPath.duration < combinedDuration)
@@ -265,6 +344,12 @@ namespace PolyBiking
 
         [DataMember]
         public List<Step> steps;
+
+        [DataMember]
+        public StationInfo departingStation;
+
+        [DataMember]
+        public StationInfo arrivalStation;
 
         public Path(List<Position> coordinates)
         {
