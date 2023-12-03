@@ -31,8 +31,9 @@ public class ObjectFactory {
     private static final QName _BikingResponse_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "BikingResponse");
     private static final QName _ArrayOfPath_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "ArrayOfPath");
     private static final QName _Path_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Path");
-    private static final QName _ArrayOfPosition_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "ArrayOfPosition");
+    private static final QName _StationInfo_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "StationInfo");
     private static final QName _Position_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Position");
+    private static final QName _ArrayOfPosition_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "ArrayOfPosition");
     private static final QName _ArrayOfStep_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "ArrayOfStep");
     private static final QName _Step_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Step");
     private static final QName _PathType_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "PathType");
@@ -64,7 +65,13 @@ public class ObjectFactory {
     private static final QName _StepInstruction_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Instruction");
     private static final QName _StepName_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Name");
     private static final QName _StepWayPoints_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "WayPoints");
+    private static final QName _StationInfoAddress_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Address");
+    private static final QName _StationInfoContractName_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "ContractName");
+    private static final QName _StationInfoLastUpdate_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "LastUpdate");
+    private static final QName _StationInfoStatus_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Status");
+    private static final QName _PathArrivalStation_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "arrivalStation");
     private static final QName _PathCoordinates_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "coordinates");
+    private static final QName _PathDepartingStation_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "departingStation");
     private static final QName _PathSteps_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "steps");
     private static final QName _BikingResponsePaths_QNAME = new QName("http://schemas.datacontract.org/2004/07/PolyBiking", "Paths");
 
@@ -126,13 +133,13 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ArrayOfPosition }
+     * Create an instance of {@link StationInfo }
      * 
      * @return
-     *     the new instance of {@link ArrayOfPosition }
+     *     the new instance of {@link StationInfo }
      */
-    public ArrayOfPosition createArrayOfPosition() {
-        return new ArrayOfPosition();
+    public StationInfo createStationInfo() {
+        return new StationInfo();
     }
 
     /**
@@ -143,6 +150,16 @@ public class ObjectFactory {
      */
     public Position createPosition() {
         return new Position();
+    }
+
+    /**
+     * Create an instance of {@link ArrayOfPosition }
+     * 
+     * @return
+     *     the new instance of {@link ArrayOfPosition }
+     */
+    public ArrayOfPosition createArrayOfPosition() {
+        return new ArrayOfPosition();
     }
 
     /**
@@ -215,16 +232,16 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfPosition }{@code >}
+     * Create an instance of {@link JAXBElement }{@code <}{@link StationInfo }{@code >}
      * 
      * @param value
      *     Java instance representing xml element's value.
      * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link ArrayOfPosition }{@code >}
+     *     the new instance of {@link JAXBElement }{@code <}{@link StationInfo }{@code >}
      */
-    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "ArrayOfPosition")
-    public JAXBElement<ArrayOfPosition> createArrayOfPosition(ArrayOfPosition value) {
-        return new JAXBElement<>(_ArrayOfPosition_QNAME, ArrayOfPosition.class, null, value);
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "StationInfo")
+    public JAXBElement<StationInfo> createStationInfo(StationInfo value) {
+        return new JAXBElement<>(_StationInfo_QNAME, StationInfo.class, null, value);
     }
 
     /**
@@ -238,6 +255,19 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "Position")
     public JAXBElement<Position> createPosition(Position value) {
         return new JAXBElement<>(_Position_QNAME, Position.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfPosition }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link ArrayOfPosition }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "ArrayOfPosition")
+    public JAXBElement<ArrayOfPosition> createArrayOfPosition(ArrayOfPosition value) {
+        return new JAXBElement<>(_ArrayOfPosition_QNAME, ArrayOfPosition.class, null, value);
     }
 
     /**
@@ -644,6 +674,97 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link String }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "Address", scope = StationInfo.class)
+    public JAXBElement<String> createStationInfoAddress(String value) {
+        return new JAXBElement<>(_StationInfoAddress_QNAME, String.class, StationInfo.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link String }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "ContractName", scope = StationInfo.class)
+    public JAXBElement<String> createStationInfoContractName(String value) {
+        return new JAXBElement<>(_StationInfoContractName_QNAME, String.class, StationInfo.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Long }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link Long }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "LastUpdate", scope = StationInfo.class)
+    public JAXBElement<Long> createStationInfoLastUpdate(Long value) {
+        return new JAXBElement<>(_StationInfoLastUpdate_QNAME, Long.class, StationInfo.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link String }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "Name", scope = StationInfo.class)
+    public JAXBElement<String> createStationInfoName(String value) {
+        return new JAXBElement<>(_StepName_QNAME, String.class, StationInfo.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Position }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link Position }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "Position", scope = StationInfo.class)
+    public JAXBElement<Position> createStationInfoPosition(Position value) {
+        return new JAXBElement<>(_Position_QNAME, Position.class, StationInfo.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link String }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "Status", scope = StationInfo.class)
+    public JAXBElement<String> createStationInfoStatus(String value) {
+        return new JAXBElement<>(_StationInfoStatus_QNAME, String.class, StationInfo.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link StationInfo }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link StationInfo }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "arrivalStation", scope = Path.class)
+    public JAXBElement<StationInfo> createPathArrivalStation(StationInfo value) {
+        return new JAXBElement<>(_PathArrivalStation_QNAME, StationInfo.class, Path.class, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfPosition }{@code >}
      * 
      * @param value
@@ -654,6 +775,19 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "coordinates", scope = Path.class)
     public JAXBElement<ArrayOfPosition> createPathCoordinates(ArrayOfPosition value) {
         return new JAXBElement<>(_PathCoordinates_QNAME, ArrayOfPosition.class, Path.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link StationInfo }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link StationInfo }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "departingStation", scope = Path.class)
+    public JAXBElement<StationInfo> createPathDepartingStation(StationInfo value) {
+        return new JAXBElement<>(_PathDepartingStation_QNAME, StationInfo.class, Path.class, value);
     }
 
     /**

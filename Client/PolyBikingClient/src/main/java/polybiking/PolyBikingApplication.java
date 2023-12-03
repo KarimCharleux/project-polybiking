@@ -70,10 +70,13 @@ public class PolyBikingApplication {
         // Display the details of the trip
         System.out.println("\n📃 Details of the trip:");
         for (Path path : response.getPaths().getValue().getPath()) {
-            if (path.getType() == PathType.BIKE_PATH)
+            if (path.getType() == PathType.BIKE_PATH) {
+                System.out.println("\t► 🅿️ Get a bike at " + path.getDepartingStation().getValue().getName().getValue() + ", " + path.getDepartingStation().getValue().getAddress().getValue() + "(" + path.getDepartingStation().getValue().getAvailableBikes() + " available bikes)");
                 System.out.println("\t► 🚴 Bike path for " + convertMetersToKilometers(path.getDistance()) + " in " + convertSecondsToHours(path.getDuration()));
-            else
+                System.out.println("\t► 🅿️ Leave the bike at " + path.getArrivalStation().getValue().getName().getValue() + ", " + path.getArrivalStation().getValue().getAddress().getValue() + "(" + path.getArrivalStation().getValue().getBikeStands() + " available bikes stands)");
+            } else {
                 System.out.println("\t► 🚶 Foot path for " + convertMetersToKilometers(path.getDistance()) + " in " + convertSecondsToHours(path.getDuration()));
+            }
         }
     }
 

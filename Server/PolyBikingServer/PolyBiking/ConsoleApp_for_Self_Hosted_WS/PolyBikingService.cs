@@ -47,24 +47,25 @@ namespace PolyBiking
                 allFranceStations.Remove(destinationStation);
                 allFranceStations.Remove(nextStation);
 
-                Console.WriteLine(iteration+" - Origin station : " + originStation.Name + " - " + originStation.Position.Lat+", "+ originStation.Position.Lng);
-                Console.WriteLine(iteration+" - Destination station : " + destinationStation.Name + " - " + destinationStation.Position.Lat + ", " + destinationStation.Position.Lng);
-                if (nextStation != null)
-                {
-                    Console.WriteLine(iteration + " - Next station : " + nextStation.Name + " - " + nextStation.Position.Lat + ", " + nextStation.Position.Lng);
-                }
+                if (originStation != null) { Console.WriteLine(iteration + " - Origin station : " + originStation.Name + " - " + originStation.Position.Lat + ", " + originStation.Position.Lng); }
+                if (destinationStation != null) { Console.WriteLine(iteration + " - Destination station : " + destinationStation.Name + " - " + destinationStation.Position.Lat + ", " + destinationStation.Position.Lng); }
+                if (nextStation != null) { Console.WriteLine(iteration + " - Next station : " + nextStation.Name + " - " + nextStation.Position.Lat + ", " + nextStation.Position.Lng); }
 
                 Console.WriteLine("[Step 0] Get the closest stations from the current origin and the destination");
 
                 // Step 1 : Foot path from current origin to closest station
-                if (currentOrigin.Lng == originStation.Position.Lng && currentOrigin.Lat == originStation.Position.Lat)
+                if (originStation != null && currentOrigin.Lng == originStation.Position.Lng && currentOrigin.Lat == originStation.Position.Lat)
                 {
                     Console.WriteLine("[Step 1] No foot path from current origin to closest station");
                 }
-                else
+                else if(originStation != null)
                 {
                     Console.WriteLine("[Step 1] Foot path from current origin to closest station");
                     allPaths.Add(GetPath(currentOrigin, originStation.Position, PathType.footPath));
+                } else
+                {
+                    Console.WriteLine("No station found between the origin and the destination");
+                    break;
                 }
 
                 // Step 2 : Bike path from closest station to closest station in the same contract
@@ -75,7 +76,7 @@ namespace PolyBiking
                 Console.WriteLine("[Step 2] Bike path from closest station to closest station in the same contract");
 
                 // Step 3 : Foot path from the station to another station or the destination
-                if (nextStation != null && (CalculateDistance(destinationStation.Position.Lat, destinationStation.Position.Lng, destination.Lat, destination.Lng) > 
+                if (nextStation != null && (CalculateDistance(destinationStation.Position.Lat, destinationStation.Position.Lng, destination.Lat, destination.Lng) >
                     CalculateDistance(destinationStation.Position.Lat, destinationStation.Position.Lng, nextStation.Position.Lat, nextStation.Position.Lng)))
                 {
                     allPaths.Add(GetPath(destinationStation.Position, nextStation.Position, PathType.footPath));
@@ -109,12 +110,13 @@ namespace PolyBiking
             Console.WriteLine("[Final Step] Compare and select the best path");
 
             // Create the responce object
-            return CreateBikingResponse(allPaths); // TODO : bestPath
+            return CreateBikingResponse(bestPath);
         }
 
         // Method to get the closest station from two positions
         private StationInfo[] GetClosestStation(Position origin, Position destination, List<StationInfo> allStation)
         {
+            StationInfo[] funcResponse = new StationInfo[3];
             StationInfo departingStation = null;
             StationInfo arrivalStation = null;
             StationInfo nextNearStation = null;
@@ -123,19 +125,21 @@ namespace PolyBiking
             foreach (var station in allStation.Where(s => s.AvailableBikes > 0).ToList())
             {
                 double distance = CalculateDistance(origin.Lat, origin.Lng, station.Position.Lat, station.Position.Lng);
-
-                if (distance < minDistance)
+                
+                if (distance < minDistance && IsStationForward(station.Position, origin, destination))
                 {
                     minDistance = distance;
                     departingStation = station;
                 }
             }
+            funcResponse[0] = departingStation;
+            if (departingStation == null) { return funcResponse; }
+
             minDistance = double.MaxValue;
             double arrivalDistance = double.MaxValue;
             foreach (var station in allStation.Where(s => s.AvailableBikeStands > 0).ToList())
             {
                 double distance = CalculateDistance(destination.Lat, destination.Lng, station.Position.Lat, station.Position.Lng);
-
                 if (station.ContractName == departingStation.ContractName && distance < minDistance && station.Number != departingStation.Number)
                 {
                     minDistance = distance;
@@ -143,20 +147,22 @@ namespace PolyBiking
                     arrivalDistance = distance;
                 }
             }
+            funcResponse[1] = arrivalStation;
+            if (arrivalStation == null) { return funcResponse; }
+
             minDistance = double.MaxValue;
             foreach (var station in allStation.Where(s => s.AvailableBikes > 0).ToList())
             {
                 double distanceFromOrigin = CalculateDistance(origin.Lat, origin.Lng, station.Position.Lat, station.Position.Lng);
                 double distanceFromDestination = CalculateDistance(destination.Lat, destination.Lng, station.Position.Lat, station.Position.Lng);
 
-                if (station.ContractName != arrivalStation.ContractName && distanceFromDestination < minDistance && arrivalDistance > distanceFromDestination)
+                if (station.ContractName != arrivalStation.ContractName && distanceFromOrigin < minDistance && arrivalDistance > distanceFromDestination)
                 {
-                    minDistance = distanceFromDestination;
+                    minDistance = distanceFromOrigin;
                     nextNearStation = station;
                 }
             }
-
-            StationInfo[] funcResponse = new StationInfo[] { departingStation, arrivalStation, nextNearStation };
+            funcResponse[2] = nextNearStation;
             return funcResponse;
         }
 
@@ -215,6 +221,10 @@ namespace PolyBiking
         // Method to select the best path between the different options
         private List<Path> SelectBestPath(List<Path> allPaths, Path fullFootPath)
         {
+            if(allPaths.Count == 0)
+            {
+                return new List<Path> { fullFootPath };
+            }
             double combinedDuration = allPaths.Sum(p => p?.duration ?? 0);
 
             if (fullFootPath != null && fullFootPath.duration < combinedDuration)
@@ -236,6 +246,20 @@ namespace PolyBiking
                 TotalDistance = paths.Sum(p => p.distance),
                 TotalDuration = paths.Sum(p => p.duration)
             };
+        }
+
+        // Method to check if a station is on the way between two positions (origin and destination)
+        private bool IsStationForward(Position station, Position origin, Position destination)
+        {
+            double distanceOriginToStation = CalculateDistance(origin.Lat, origin.Lng, station.Lat, station.Lng);
+            double distanceStationToDestination = CalculateDistance(station.Lat, station.Lng, destination.Lat, destination.Lng);
+            double distanceOriginToDestination = CalculateDistance(origin.Lat, origin.Lng, destination.Lat, destination.Lng);
+
+            double totalDistanceViaStation = distanceOriginToStation + distanceStationToDestination;
+
+            double threshold = 1.05; // 5% more than the direct path
+
+            return totalDistanceViaStation <= distanceOriginToDestination * threshold;
         }
     }
 

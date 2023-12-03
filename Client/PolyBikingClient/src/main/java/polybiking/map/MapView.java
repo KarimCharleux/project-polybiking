@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 public class MapView {
-    private static final Color CYCLE_PATH_COLOR = Color.BLUE;
+    private static final Color CYCLE_PATH_COLOR = Color.GREEN;
     private static final Color FOOT_PATH_COLOR = Color.GRAY;
     private final JXMapViewer mapViewer;
     private final JFrame frame;
