@@ -17,7 +17,11 @@ public class PolyBikingApplication {
         PolyBikingService bikingService = new PolyBikingService();
         this.polyBikingService = bikingService.getBasicHttpBindingIPolyBikingService();
 
-        System.out.println("▷ PolyBiking Application ◁");
+        System.out.println("▷ Welcome to PolyBiking Application !👋 ◁");
+        System.out.println("\t◽ Good exemple of trip :");
+        System.out.println("\t\t🚩 Paris ➡️ Toulouse ");
+        System.out.println("\t\t🚩 85 Avenue Georges Clemenceau, 69230 Saint-Genis-Laval ➡️ 61 Avenue Roger Salengro, 69100 Villeurbanne");
+        System.out.println("\t\t🚩 Lyon ➡️ Mulhouse");
     }
 
     /**
@@ -71,9 +75,9 @@ public class PolyBikingApplication {
         System.out.println("\n📃 Details of the trip:");
         for (Path path : response.getPaths().getValue().getPath()) {
             if (path.getType() == PathType.BIKE_PATH) {
-                System.out.println("\t► 🅿️ Get a bike at " + path.getDepartingStation().getValue().getName().getValue() + ", " + path.getDepartingStation().getValue().getAddress().getValue() + "(" + path.getDepartingStation().getValue().getAvailableBikes() + " available bikes)");
+                System.out.println("\t► 🅿️ Get a bike at " + path.getDepartingStation().getValue().getName().getValue() + ", " + path.getDepartingStation().getValue().getContractName().getValue() + " (" + path.getDepartingStation().getValue().getAvailableBikes() + " available bikes)");
                 System.out.println("\t► 🚴 Bike path for " + convertMetersToKilometers(path.getDistance()) + " in " + convertSecondsToHours(path.getDuration()));
-                System.out.println("\t► 🅿️ Leave the bike at " + path.getArrivalStation().getValue().getName().getValue() + ", " + path.getArrivalStation().getValue().getAddress().getValue() + "(" + path.getArrivalStation().getValue().getBikeStands() + " available bikes stands)");
+                System.out.println("\t► 🅿️ Leave the bike at " + path.getArrivalStation().getValue().getName().getValue() + ", " + path.getArrivalStation().getValue().getContractName().getValue() + " (" + path.getArrivalStation().getValue().getBikeStands() + " available bikes stands)");
             } else {
                 System.out.println("\t► 🚶 Foot path for " + convertMetersToKilometers(path.getDistance()) + " in " + convertSecondsToHours(path.getDuration()));
             }

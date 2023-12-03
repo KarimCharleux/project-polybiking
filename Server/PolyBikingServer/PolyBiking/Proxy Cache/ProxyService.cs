@@ -22,7 +22,7 @@ namespace Proxy_Cache_Server
             string cachedAddress = this.addressCache[address] as string;
             if (cachedAddress == null)
             {
-                string url = "https://api.openrouteservice.org/geocode/autocomplete?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&text=" + address + "&boundary.country=FR&layers=locality,address";
+                string url = "https://api.openrouteservice.org/geocode/search?api_key=5b3ce3597851110001cf6248bed9f6d656c54925b8cc6fb2f745876f&text=" + address + "&boundary.country=FR&layers=locality,address";
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 Console.WriteLine("[GetAddressInfo] Call to api.openrouteservice.org/geocode/" + address);

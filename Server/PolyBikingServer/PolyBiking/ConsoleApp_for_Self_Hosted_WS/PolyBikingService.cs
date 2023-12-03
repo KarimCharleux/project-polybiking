@@ -31,11 +31,16 @@ namespace PolyBiking
             List<StationInfo> allFranceStations = JsonConvert.DeserializeObject<List<StationInfo>>(proxyServiceClient.GetStationInfo());
             Console.WriteLine("[ComputeTrip] Call to api.jcdecaux.com/vls/v1/stations");
 
+            // Start a task to get the full foot path between the two addresses (to compare with the bike path at the end)
+            var fullFootPathTask = Task.Run(() => GetPath(origin, destination, PathType.footPath));
+
             List<Path> allPaths = new List<Path>();
+            List<Task<Path>> allPathsTasks = new List<Task<Path>>();
             Position currentOrigin = origin;
             int iteration = 1;
             while (true)
             {
+                Console.WriteLine("\n\n\tIteration " + iteration);
                 // Step 0 : Get the closest stations from the current origin and the destination
                 StationInfo[] stations = GetClosestStation(currentOrigin, destination, allFranceStations);
                 StationInfo originStation = stations[0];
@@ -61,7 +66,7 @@ namespace PolyBiking
                 else if(originStation != null)
                 {
                     Console.WriteLine("[Step 1] Foot path from current origin to closest station");
-                    allPaths.Add(GetPath(currentOrigin, originStation.Position, PathType.footPath));
+                    allPathsTasks.Add(Task.Run(() => GetPath(currentOrigin, originStation.Position, PathType.footPath)));
                 } else
                 {
                     Console.WriteLine("No station found between the origin and the destination");
@@ -69,22 +74,20 @@ namespace PolyBiking
                 }
 
                 // Step 2 : Bike path from closest station to closest station in the same contract
-                Path bikePath = GetPath(originStation.Position, destinationStation.Position, PathType.bikePath);
-                bikePath.departingStation = originStation;
-                bikePath.arrivalStation = destinationStation;
-                allPaths.Add(bikePath);
+                allPathsTasks.Add(GetBikePathWithStations(originStation, destinationStation));
+
                 Console.WriteLine("[Step 2] Bike path from closest station to closest station in the same contract");
 
                 // Step 3 : Foot path from the station to another station or the destination
                 if (nextStation != null && (CalculateDistance(destinationStation.Position.Lat, destinationStation.Position.Lng, destination.Lat, destination.Lng) >
                     CalculateDistance(destinationStation.Position.Lat, destinationStation.Position.Lng, nextStation.Position.Lat, nextStation.Position.Lng)))
                 {
-                    allPaths.Add(GetPath(destinationStation.Position, nextStation.Position, PathType.footPath));
+                    allPathsTasks.Add(Task.Run(() => GetPath(destinationStation.Position, nextStation.Position, PathType.footPath)));
                     Console.WriteLine("[Step 3] Foot path from the station to another station");
                 }
                 else
                 {
-                    allPaths.Add(GetPath(destinationStation.Position, destination, PathType.footPath));
+                    allPathsTasks.Add(Task.Run(() => GetPath(destinationStation.Position, destination, PathType.footPath)));
                     Console.WriteLine("[Step 3] Foot path from the station to the destination");
                     break;
                 }
@@ -99,19 +102,32 @@ namespace PolyBiking
                 Console.WriteLine("[Step 4] Update the current origin and repeat until the destination is reached");
             }
 
-            Console.WriteLine("Path found in " + iteration + " iterations");
+            // Wait for all the tasks to finish
+            await Task.WhenAll(allPathsTasks);
+
+            // Retrieve the results of the tasks and add them to the list
+            foreach (var task in allPathsTasks)
+            {
+                allPaths.Add(await task);
+            }
+
+            Console.WriteLine("\nPath found in " + iteration + " iterations");
 
             // Get the full foot path to check if it's a better option than bike
-            Path fullFootPath = GetPath(origin, destination, PathType.footPath);
+            Path fullFootPath = await fullFootPathTask;
             Console.WriteLine("[Step] Get the full foot path to check if it's a better option than bike");
 
             // Compare and select the best path
             List<Path> bestPath = SelectBestPath(allPaths, fullFootPath);
             Console.WriteLine("[Final Step] Compare and select the best path");
 
+            Console.WriteLine("\n Full foot path : " + ConvertSecondsToHours(fullFootPath.duration) + " and " + ConvertMetersToKilometers(fullFootPath.distance) + "\n");
+           
+
             // Create the responce object
-            return CreateBikingResponse(bestPath);
+            return CreateBikingResponse(allPaths);
         }
+
 
         // Method to get the closest station from two positions
         private StationInfo[] GetClosestStation(Position origin, Position destination, List<StationInfo> allStation)
@@ -164,6 +180,17 @@ namespace PolyBiking
             }
             funcResponse[2] = nextNearStation;
             return funcResponse;
+        }
+
+        private async Task<Path> GetBikePathWithStations(StationInfo originStation, StationInfo destinationStation)
+        {
+            var bikePath = await Task.Run(() => GetPath(originStation.Position, destinationStation.Position, PathType.bikePath));
+            if (bikePath != null)
+            {
+                bikePath.departingStation = originStation;
+                bikePath.arrivalStation = destinationStation;
+            }
+            return bikePath;
         }
 
         // Method to get the position from an string address 
@@ -260,6 +287,18 @@ namespace PolyBiking
             double threshold = 1.05; // 5% more than the direct path
 
             return totalDistanceViaStation <= distanceOriginToDestination * threshold;
+        }
+        private string ConvertSecondsToHours(double totalSeconds)
+        {
+            double hours = totalSeconds / 3600;
+            double minutes = (totalSeconds % 3600) / 60;
+            return $"{hours:F2}h {minutes:F2}min";
+        }
+
+        private string ConvertMetersToKilometers(double meters)
+        {
+            double kilometers = meters / 1000.0;
+            return $"{kilometers:F2} km";
         }
     }
 
