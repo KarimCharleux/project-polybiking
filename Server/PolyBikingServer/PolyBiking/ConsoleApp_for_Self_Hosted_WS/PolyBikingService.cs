@@ -125,7 +125,7 @@ namespace PolyBiking
            
 
             // Create the responce object
-            return CreateBikingResponse(allPaths);
+            return CreateBikingResponse(bestPath);
         }
 
 
