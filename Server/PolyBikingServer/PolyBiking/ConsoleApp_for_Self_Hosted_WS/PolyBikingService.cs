@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
 using PolyBiking.Proxy;
-using ConsoleApp_for_Self_Hosted_WS;
 
 namespace PolyBiking
 {

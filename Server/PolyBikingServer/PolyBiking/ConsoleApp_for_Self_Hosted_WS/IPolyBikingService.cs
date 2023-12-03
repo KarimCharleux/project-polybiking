@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.ServiceModel;
-using PolyBiking;
 
-namespace ConsoleApp_for_Self_Hosted_WS
+namespace PolyBiking
 {
     [ServiceContract()]
     public interface IPolyBikingService
