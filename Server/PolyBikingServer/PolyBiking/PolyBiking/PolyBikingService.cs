@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
 using PolyBiking.Proxy;
+using Apache.NMS.ActiveMQ;
+using Apache.NMS;
 
 namespace PolyBiking
 {
@@ -27,9 +29,23 @@ namespace PolyBiking
             Position origin = originTask.Result;
             Position destination = destinationTask.Result;
 
+            if (origin == null)
+            {
+                throw new Exception("No position found for this address " + addressOrigin);
+            }
+
+            if (destination == null)
+            {
+                throw new Exception("No position found for this address " + addressDestination);
+            }
+
+            if (origin.Lat == destination.Lat && origin.Lng == destination.Lng)
+            {
+                throw new Exception("The two addresses are the same, destination :" + destination.Lat + ", " + destination.Lng + " and origin : " + origin.Lat + ", " + origin.Lng);
+            }
+
             // Get all the stations in France
             List<StationInfo> allFranceStations = JsonConvert.DeserializeObject<List<StationInfo>>(proxyServiceClient.GetStationInfo());
-            Console.WriteLine("[ComputeTrip] Call to api.jcdecaux.com/vls/v1/stations");
 
             // Start a task to get the full foot path between the two addresses (to compare with the bike path at the end)
             var fullFootPathTask = Task.Run(() => GetPath(origin, destination, PathType.footPath));
@@ -40,7 +56,7 @@ namespace PolyBiking
             int iteration = 1;
             while (true)
             {
-                Console.WriteLine("\n\n\tIteration " + iteration);
+                Console.WriteLine("\n\n\t--- Iteration " + iteration + "---");
                 // Step 0 : Get the closest stations from the current origin and the destination
                 StationInfo[] stations = GetClosestStation(currentOrigin, destination, allFranceStations);
                 StationInfo originStation = stations[0];
@@ -52,9 +68,9 @@ namespace PolyBiking
                 allFranceStations.Remove(destinationStation);
                 allFranceStations.Remove(nextStation);
 
-                if (originStation != null) { Console.WriteLine(iteration + " - Origin station : " + originStation.Name + " - " + originStation.Position.Lat + ", " + originStation.Position.Lng); }
-                if (destinationStation != null) { Console.WriteLine(iteration + " - Destination station : " + destinationStation.Name + " - " + destinationStation.Position.Lat + ", " + destinationStation.Position.Lng); }
-                if (nextStation != null) { Console.WriteLine(iteration + " - Next station : " + nextStation.Name + " - " + nextStation.Position.Lat + ", " + nextStation.Position.Lng); }
+                if (originStation != null) { Console.WriteLine("Origin station : " + originStation.Name + " - " + originStation.Position.Lat + ", " + originStation.Position.Lng); }
+                if (destinationStation != null) { Console.WriteLine("Destination station : " + destinationStation.Name + " - " + destinationStation.Position.Lat + ", " + destinationStation.Position.Lng); }
+                if (nextStation != null) { Console.WriteLine("Next station : " + nextStation.Name + " - " + nextStation.Position.Lat + ", " + nextStation.Position.Lng + ""); }
 
                 Console.WriteLine("[Step 0] Get the closest stations from the current origin and the destination");
 
@@ -63,11 +79,12 @@ namespace PolyBiking
                 {
                     Console.WriteLine("[Step 1] No foot path from current origin to closest station");
                 }
-                else if(originStation != null)
+                else if (originStation != null)
                 {
                     Console.WriteLine("[Step 1] Foot path from current origin to closest station");
                     allPathsTasks.Add(Task.Run(() => GetPath(currentOrigin, originStation.Position, PathType.footPath)));
-                } else
+                }
+                else
                 {
                     Console.WriteLine("No station found between the origin and the destination");
                     break;
@@ -92,9 +109,9 @@ namespace PolyBiking
                     break;
                 }
 
-                if (iteration++ > 10)
+                if (iteration++ > 20)
                 {
-                    break;
+                    break; // To avoid infinite loop
                 }
 
                 // Step 4 : Update the current origin and repeat until the destination is reached
@@ -105,13 +122,13 @@ namespace PolyBiking
             // Wait for all the tasks to finish
             await Task.WhenAll(allPathsTasks);
 
+            Console.WriteLine("\nPath found in " + iteration + " iterations");
+
             // Retrieve the results of the tasks and add them to the list
             foreach (var task in allPathsTasks)
             {
                 allPaths.Add(await task);
             }
-
-            Console.WriteLine("\nPath found in " + iteration + " iterations");
 
             // Get the full foot path to check if it's a better option than bike
             Path fullFootPath = await fullFootPathTask;
@@ -122,7 +139,18 @@ namespace PolyBiking
             Console.WriteLine("[Final Step] Compare and select the best path");
 
             Console.WriteLine("\n Full foot path : " + ConvertSecondsToHours(fullFootPath.duration) + " and " + ConvertMetersToKilometers(fullFootPath.distance) + "\n");
-           
+
+
+            // Send the first path to the ActiveMQ queue
+            try
+            {
+                SendPathToActiveMQ(bestPath);
+                Console.WriteLine("[Step] Send the first path to the ActiveMQ queue");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("/!\\ Error while sending the first path to the ActiveMQ queue : " + e.Message);
+            }
 
             // Create the responce object
             return CreateBikingResponse(bestPath);
@@ -141,7 +169,7 @@ namespace PolyBiking
             foreach (var station in allStation.Where(s => s.AvailableBikes > 0).ToList())
             {
                 double distance = CalculateDistance(origin.Lat, origin.Lng, station.Position.Lat, station.Position.Lng);
-                
+
                 if (distance < minDistance && IsStationForward(station.Position, origin, destination))
                 {
                     minDistance = distance;
@@ -197,7 +225,16 @@ namespace PolyBiking
         private Position getPositionFromAddress(string address)
         {
             string responseBody = proxyServiceClient.GetAddressInfo(address);
-            double[] coords = JsonConvert.DeserializeObject<double[]>(responseBody);
+            double[] coords;
+            try
+            {
+                coords = JsonConvert.DeserializeObject<double[]>(responseBody);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("/!\\ Error while getting the position from an address : " + e.Message);
+                throw new Exception("No position found for this address " + address);
+            }
 
             Position positionResult = new Position();
             if (responseBody != null)
@@ -248,7 +285,7 @@ namespace PolyBiking
         // Method to select the best path between the different options
         private List<Path> SelectBestPath(List<Path> allPaths, Path fullFootPath)
         {
-            if(allPaths.Count == 0)
+            if (allPaths.Count == 0)
             {
                 return new List<Path> { fullFootPath };
             }
@@ -288,6 +325,45 @@ namespace PolyBiking
 
             return totalDistanceViaStation <= distanceOriginToDestination * threshold;
         }
+
+        // Method to send a path to the ActiveMQ queue
+        public void SendPathToActiveMQ(List<Path> pathList)
+        {
+            // The port is 61616 by default for ActiveMQ (can be changed in the configuration file)
+            Uri connecturi = new Uri("activemq:tcp://localhost:61616");
+            ConnectionFactory connectionFactory = new ConnectionFactory(connecturi);
+
+            // Create a single Connection from the Connection Factory.
+            IConnection connection = connectionFactory.CreateConnection();
+            connection.Start();
+
+            // Create a session from the Connection.
+            ISession session = connection.CreateSession();
+
+            // Use the session to target a queue.
+            IDestination destination = session.GetQueue("PolyBikingTrip");
+
+            // Create a Producer targetting the selected queue.
+            IMessageProducer producer = session.CreateProducer(destination);
+
+
+            // You may configure everything to your needs, for instance:
+            producer.DeliveryMode = MsgDeliveryMode.NonPersistent;
+
+            foreach (Path path in pathList)
+            {
+                // Create a simple text message and send it
+                ITextMessage message = session.CreateTextMessage(JsonConvert.SerializeObject(path));
+                producer.Send(message);
+            }
+
+            // Cleanup
+            producer.Close();
+            session.Close();
+            connection.Close();
+        }
+
+
         private string ConvertSecondsToHours(double totalSeconds)
         {
             double hours = totalSeconds / 3600;
@@ -384,7 +460,6 @@ namespace PolyBiking
     public class BikingResponse
     {
         public List<Path> Paths;
-        public List<Step> steps;
         public double TotalDistance;
         public double TotalDuration;
     }

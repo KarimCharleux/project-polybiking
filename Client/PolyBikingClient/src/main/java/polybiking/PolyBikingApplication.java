@@ -5,6 +5,9 @@ import polybiking.map.MapView;
 
 import java.util.Scanner;
 
+import static polybiking.map.Utils.convertMetersToKilometers;
+import static polybiking.map.Utils.convertSecondsToHours;
+
 /**
  * Main class of the PolyBiking application
  */
@@ -19,9 +22,9 @@ public class PolyBikingApplication {
 
         System.out.println("▷ Welcome to PolyBiking Application !👋 ◁");
         System.out.println("\t◽ Good exemple of trip :");
-        System.out.println("\t\t🚩 Paris ➡️ Toulouse ");
-        System.out.println("\t\t🚩 85 Avenue Georges Clemenceau, 69230 Saint-Genis-Laval ➡️ 61 Avenue Roger Salengro, 69100 Villeurbanne");
-        System.out.println("\t\t🚩 Lyon ➡️ Mulhouse");
+        System.out.println("\t\t🚩 Paris → Toulouse ");
+        System.out.println("\t\t🚩 85 Avenue Georges Clemenceau, 69230 Saint-Genis-Laval → 61 Avenue Roger Salengro, 69100 Villeurbanne");
+        System.out.println("\t\t🚩 Lyon → Mulhouse");
     }
 
     /**
@@ -84,17 +87,6 @@ public class PolyBikingApplication {
         }
     }
 
-    private String convertSecondsToHours(Double seconds) {
-        double hours = seconds / 3600;
-        double minutes = (seconds % 3600) / 60;
-        return String.format("%.0f", hours) + "h" + String.format("%.0f", minutes) + "min";
-    }
-
-    private String convertMetersToKilometers(Double meters) {
-        return String.format("%.2f", meters / 1000) + "km";
-    }
-
-
     /**
      * Ask for a city name and check if it exists in the list
      *
@@ -112,4 +104,5 @@ public class PolyBikingApplication {
         }
         return result;
     }
+
 }

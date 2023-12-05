@@ -22,7 +22,6 @@ import jakarta.xml.bind.annotation.XmlType;
  *         <element name="Paths" type="{http://schemas.datacontract.org/2004/07/PolyBiking}ArrayOfPath" minOccurs="0"/>
  *         <element name="TotalDistance" type="{http://www.w3.org/2001/XMLSchema}double" minOccurs="0"/>
  *         <element name="TotalDuration" type="{http://www.w3.org/2001/XMLSchema}double" minOccurs="0"/>
- *         <element name="steps" type="{http://schemas.datacontract.org/2004/07/PolyBiking}ArrayOfStep" minOccurs="0"/>
  *       </sequence>
  *     </restriction>
  *   </complexContent>
@@ -35,8 +34,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType(name = "BikingResponse", propOrder = {
     "paths",
     "totalDistance",
-    "totalDuration",
-    "steps"
+    "totalDuration"
 })
 public class BikingResponse {
 
@@ -46,8 +44,6 @@ public class BikingResponse {
     protected Double totalDistance;
     @XmlElement(name = "TotalDuration")
     protected Double totalDuration;
-    @XmlElementRef(name = "steps", namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", type = JAXBElement.class, required = false)
-    protected JAXBElement<ArrayOfStep> steps;
 
     /**
      * Gets the value of the paths property.
@@ -119,30 +115,6 @@ public class BikingResponse {
      */
     public void setTotalDuration(Double value) {
         this.totalDuration = value;
-    }
-
-    /**
-     * Gets the value of the steps property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JAXBElement }{@code <}{@link ArrayOfStep }{@code >}
-     *     
-     */
-    public JAXBElement<ArrayOfStep> getSteps() {
-        return steps;
-    }
-
-    /**
-     * Sets the value of the steps property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link ArrayOfStep }{@code >}
-     *     
-     */
-    public void setSteps(JAXBElement<ArrayOfStep> value) {
-        this.steps = value;
     }
 
 }

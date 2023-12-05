@@ -816,17 +816,4 @@ public class ObjectFactory {
         return new JAXBElement<>(_BikingResponsePaths_QNAME, ArrayOfPath.class, BikingResponse.class, value);
     }
 
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfStep }{@code >}
-     * 
-     * @param value
-     *     Java instance representing xml element's value.
-     * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link ArrayOfStep }{@code >}
-     */
-    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/PolyBiking", name = "steps", scope = BikingResponse.class)
-    public JAXBElement<ArrayOfStep> createBikingResponseSteps(ArrayOfStep value) {
-        return new JAXBElement<>(_PathSteps_QNAME, ArrayOfStep.class, BikingResponse.class, value);
-    }
-
 }
